@@ -1,0 +1,6 @@
+python3 -m venv ~/.puma
+source ~/.puma/bin/activate 
+install conda 
+https://conda.io/projects/conda/en/latest/user-guide/install/index.html
+conda create --name puma
+conda activate puma

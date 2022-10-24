@@ -1,0 +1,10 @@
+pylint
+pytest
+click
+black
+pytest -cov
+pika
+django-common-helpers
+django-admin
+pip-tools
+django
