@@ -1,6 +1,7 @@
-python3 -m venv ~/.puma
-source ~/.puma/bin/activate 
-install conda 
-https://conda.io/projects/conda/en/latest/user-guide/install/index.html
-conda create --name puma
-conda activate puma
+python3 -m venv ~/.puma      #type it inside project folder -- create python venv
+source ~/.puma/bin/activate  #type it inside project folder -- activate python venv
+install conda             
+https://conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation #link to download conda
+conda create --name puma     #create conda environment
+conda activate puma          #activate conda environment
+pip install -U -r            #install all dependencies

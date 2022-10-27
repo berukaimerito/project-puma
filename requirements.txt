@@ -8,3 +8,6 @@ django-common-helpers
 django-admin
 pip-tools
 django
+pika
+pymongo
+cookiecutter
