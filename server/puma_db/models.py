@@ -1,11 +1,11 @@
 from curses.ascii import US
-import email
 from email.policy import default
 from enum import unique
 from sqlite3 import Date
 from mongoengine import *
 import datetime
-from .database import db
+from puma_db.database import *
+#import mongoengine_goodjson as gj
 
 #connect(host="mongodb://127.0.0.1:27017/test_2")
 
@@ -16,11 +16,11 @@ from .database import db
 
 class User(Document):
     name = db.StringField(required=True)
-    last_name = StringField(required=True)
-    name = StringField(unique=True)
-    email = EmailField(required=True)
-    password = StringField(required = True)
-    cell = StringField()
+    # last_name = db.StringField(required=True)
+    # name = db.StringField(unique=True)
+    # email = db.EmailField(required=True)
+    # password = db.StringField(required = True)
+    cell = db.StringField()
    # Portfolio = EmbeddedDocumentField(document_type=Document)
 
 
@@ -48,7 +48,7 @@ class Script(Document):
     in_use = BooleanField()
     path = StringField()
     user = ReferenceField(User)
-    state = EnumField(Status, default=Status.NEW)
+    #state = EnumField(Status, default=Status.NEW)
 
 
 # user = User(name='Using MongoEngine')
