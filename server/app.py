@@ -50,6 +50,8 @@ def user_save():
     return {'id': str(id)} , 200
 
 
+
+
 if __name__ == "__main__":
     puma_app.run(debug=True , port=5001, host='0.0.0.0')
 
@@ -65,5 +67,4 @@ if __name__ == "__main__":
 # Real Time , Historical Data
 # RabbitMQ
 # SCAFFOLD
-# UTILITIES 
-
+# UTILITIES
