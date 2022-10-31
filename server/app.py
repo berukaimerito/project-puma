@@ -1,12 +1,10 @@
-
-from crypt import methods
+from flask_wtf import FlaskForm
+from wtforms import StringField,SubmitField
 from flask import Flask, render_template, Blueprint,jsonify, request
 from puma_db import models, database
- 
-
 from puma_db.models import Ticker
-from server.puma_db.database import initialize_db
-
+from puma_db.database import initialize_db
+from puma_db.models import *
 puma_app = Flask(__name__)
 
 puma_app.config['MONGODB_SETTINGS'] = {
@@ -14,35 +12,38 @@ puma_app.config['MONGODB_SETTINGS'] = {
 }
 initialize_db(puma_app)
 
-@puma_app.route("/")
-def test():
-    return "<h1>Test</h1>"
 
-ex = [  
-    {
-        "name": "Kaan",
-        "nick_name": "Kosti",
-        "portfolio": "['ETH': 442]" }
-    ]
-
-@puma_app.route("/home")
-def home_page():
-    return  jsonify(ex)
-    # f'{Ticker.ticker_symbol} price is : {Ticker.real_p
-
-@puma_app.route("/login")
+@puma_app.route('/login', methods=['GET', 'POST'])
 def login():
-    return jsonify(ex)
+    pass
 
-@puma_app.route("/register")
-def register():
-    return jsonify(ex)
 
-@puma_app.route("/portfolio" , methods=['POST'])
+@puma_app.route('/')
+def main():
+    return 'annesi'
+
+
+
+
+
+
+
+
+
+
+@puma_app.route("/users" , methods=['POST'])
 def portfolio():
-    ticker = request.get_json()
-    ex.append(ticker)
-    return {'id': len(ex)}, 200
+    body = request.get_json()
+    user = User(**body).save()
+    id = user.id
+    return {'id': str(id)} , 200
+
+
+
+
+
+
 
 if __name__ == "__main__":
-    puma_app.run(debug=True , port=5001, host='0.0.0.0')
+    puma_app.run(debug=True)
+    #puma_app.run(debug=True , port=5001, host='0.0.0.0')

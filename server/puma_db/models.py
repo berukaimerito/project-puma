@@ -1,13 +1,8 @@
-from curses.ascii import US
-import email
-from email.policy import default
-from enum import unique
-from sqlite3 import Date
 from mongoengine import *
 import datetime
-from .database import db
+#from .database import db
 
-#connect(host="mongodb://127.0.0.1:27017/test_2")
+connect(host="mongodb://127.0.0.1:27017/test")
 
 # class Status(Enum):
 #     NEW = 'NEW'
@@ -15,11 +10,10 @@ from .database import db
 #     DONE = 'DONE'
 
 class User(Document):
-    name = db.StringField(required=True)
-    last_name = StringField(required=True)
-    name = StringField(unique=True)
-    email = EmailField(required=True)
-    password = StringField(required = True)
+    name = StringField(required=False)
+    last_name = StringField(required=False)
+    email = EmailField(required=False)
+    password = StringField(required = False)
     cell = StringField()
    # Portfolio = EmbeddedDocumentField(document_type=Document)
 
@@ -48,9 +42,12 @@ class Script(Document):
     in_use = BooleanField()
     path = StringField()
     user = ReferenceField(User)
-    state = EnumField(Status, default=Status.NEW)
+   # state = EnumField(Status, default=Status.NEW)
 
 
-# user = User(name='Using MongoEngine')
-# user.tags = ['mongodb', 'mongoengine']
-# user.save()
+
+user = User(name='Kaan',last_name='Kosti',password='a')
+
+user.save()
+
+disconnect(alias='default')
