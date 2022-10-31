@@ -13,10 +13,6 @@ puma_app.config['MONGODB_SETTINGS'] = {
 initialize_db(puma_app)
 
 
-@puma_app.route('/login', methods=['GET', 'POST'])
-def login():
-    pass
-
 
 @puma_app.route('/')
 def main():
@@ -28,6 +24,10 @@ def main():
 
 
 
+
+@puma_app.route('/login', methods=['GET', 'POST'])
+def login():
+    pass
 
 
 
