@@ -15,7 +15,7 @@ class User(Document):
     email = EmailField(required=False)
     password = StringField(required = False)
     cell = StringField()
-   # Portfolio = EmbeddedDocumentField(document_type=Document)
+   #Portfolio = EmbeddedDocumentField(document_type=Document)
 
 
 class Log(Document):
@@ -24,7 +24,7 @@ class Log(Document):
 
 
 class Ticker(Document):
-    ticker_symbol = StringField()
+    symbol = StringField()
     timestamp = DateTimeField()
     time_series = ObjectIdField()
     real_price = LongField()
@@ -47,7 +47,10 @@ class Script(Document):
 
 
 user = User(name='Kaan',last_name='Kosti',password='a')
-
 user.save()
 
+
+
+script1 =Script(in_use=True,path="neyin pathi bilmiyorum",user=user)
+script1.save()
 disconnect(alias='default')
