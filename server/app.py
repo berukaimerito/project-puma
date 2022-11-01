@@ -49,7 +49,7 @@ def dashboard():
     pass
 
 
-@puma_app.route("/dashboard/{user_id}")
+@puma_app.route("/dashboard/{nick_name}")
 def puma_dashboard():
     # provide all user customized information 
     # {TICKER, REAL-TIME. HISTORICAL, PORTFOLIO, IDE}
@@ -57,7 +57,7 @@ def puma_dashboard():
     pass
 
 
-@puma_app.route("/dashboard/script/{user_id}/{ticker_symbol}/{session_id}")
+@puma_app.route("/scripts/{ticker_symbol}/{script_name}")
 def puma_dev_env():
     # open a IDE dialog
     # start all scripting services
@@ -69,44 +69,44 @@ def provide_register():
     # If user is not logged in, provide him a button to register
     pass
 
-@puma_app.route("/users/{user_id}")
+@puma_app.route("/users/{nick_name}")
 def user_account():
     
     # return the whole user page HTML
     # If anything selected , redirect to that method ? or route
     pass
 
-@puma_app.route("/profile/{user_id}/settings")
+@puma_app.route("/profile/{nick_name}/settings")
 def user_settings():
 
     # pass
     pass
 
-@puma_app.route("/profile/{user_id}/actions")
+@puma_app.route("/profile/{nick_name}/actions")
 def user_actions():
 
     pass
 
     # pass
 
-@puma_app.route("/profile/{user_id}/scripts")
+@puma_app.route("/profile/{nicK_name}/scripts")
 def user_scripts_overview():
 
     pass
 
 
-@puma_app.route("/dashboard/{user_id}")
+@puma_app.route("/dashboard/{nick_name}")
 def puma_dashboard():
 
     #PROVIDE PORTFOLIO, REAL-TIME, HISTORICAL DATA, WIDGET 
     pass
 
 
-@puma_app.route("/dashboard/{user_id}/tickers?={ticker_symbol}")
+@puma_app.route("/dashboard/{nick_name}/{currency}")
 def puma_dashboard():
     pass
 
-@puma_app.route("/portfolio/{user_id}")
+@puma_app.route("/portfolio/{nick_name}")
 def puma_dashboard_portfolio():
     # open portfolio in full page
     # provide portfolio settings
@@ -116,7 +116,7 @@ def puma_dashboard_portfolio():
 
 
 
-@puma_app.route("/dashboard/{user_id}/develop/tickers?={ticker_symbol}/scripts?={scripts_id}")
+@puma_app.route("/dashboard/{nick_name}/develop/{ticker_symbol}/{scripts_id}")
 def puma_dev_env():
 
     # If user open IDE dialog, the state is now interactive.
