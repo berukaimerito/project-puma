@@ -46,11 +46,11 @@ class Script(Document):
 
 
 
-user = User(name='Kaan',last_name='Kosti',password='a')
-user.save()
+# user = User(name='Kaan',last_name='Kosti',password='a')
+# user.save()
 
 
-
-script1 =Script(in_use=True,path="neyin pathi bilmiyorum",user=user)
-script1.save()
+#
+# script1 =Script(in_use=True,path="neyin pathi bilmiyorum",user=user)
+# script1.save()
 disconnect(alias='default')
