@@ -4,9 +4,15 @@
     <form id="registerForm" class="form form-register" method="POST" action="" role="form">
            {{ form.csrf_token }}
             <div class="form-group">
-                {{form.username.label}}
-                {{form.username(placeholder="Username", class_="form-control")}}
+                {{form.name.label}}
+                {{form.name(placeholder="Username", class_="form-control")}}
             </div>
+              <div class="form-group">
+                {{form.last_name.label}}
+                {{form.last_name(placeholder="Lastname", class_="form-control")}}
+            </div>
+
+
             <div class="form-group">
                 {{form.email.label}}
                 {{form.email(placeholder="Email", class_="form-control")}}
@@ -31,5 +37,5 @@
             </div>
             <p><input class="btn btn-primary" type="submit" value="Register"></p>
     </form>
-    <p><em>Already registered?</em> Click <a href="/">here</a> to login.</p>
+    <p><em>Already registered?</em> Click <a href="login.html">here</a> to login.</p>
 </div>

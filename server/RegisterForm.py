@@ -9,27 +9,11 @@ from puma_db.models import User
 
 class RegisterForm(FlaskForm):
     """Register form."""
-    username = StringField(
-        "Username", validators=[DataRequired(), Length(min=3, max=25)]
-    )
-    last_name = StringField(
-        "Lastname", validators=[DataRequired(), Length(min=3, max=25)]
-    )
-
-
-    email = StringField(
-        "Email", validators=[DataRequired(), Email(), Length(min=6, max=40)]
-    )
-
-    cell = StringField(
-        "Cell", validators=[DataRequired(), Length(min=6, max=40)]
-    )
-
-
-    password = PasswordField(
-        "Password", validators=[DataRequired(), Length(min=6, max=40)]
-    )
-
+    name = StringField("name", validators=[DataRequired(), Length(min=3, max=25)])
+    last_name = StringField("Lastname", validators=[DataRequired(), Length(min=3, max=25)])
+    email = StringField("Email", validators=[DataRequired(), Email(), Length(min=6, max=40)])
+    cell = StringField("Cell", validators=[DataRequired(), Length(min=6, max=40)])
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=6, max=40)])
     confirm = PasswordField(
         "Verify password",
         [DataRequired(), EqualTo('Password', message="Passwords must match")],
@@ -42,13 +26,11 @@ class RegisterForm(FlaskForm):
 
 
     def validate(self):
-        """Validate the form."""
-        initial_validation = super(RegisterForm, self).validate()
-        if not initial_validation:
-            return False
-        user = User.objects(username=self.username.data)
+
+        user = User.objects(name=self.name.data)
+
         if user:
-            self.username.errors.append("Username already registered")
+            self.name.errors.append("Username already registered")
             return False
         user = User.objects(email=self.email.data)
         if user:

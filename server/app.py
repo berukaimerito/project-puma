@@ -1,11 +1,18 @@
-from flask import Flask, render_template, Blueprint, jsonify, request, redirect
+from flask import Flask, render_template, Blueprint, jsonify, request, redirect, session
 from puma_db import models, database
 from puma_db.models import Ticker
 from puma_db.database import initialize_db
 from puma_db.models import *
-from Forms import RegisterForm
+from RegisterForm import RegisterForm
+from LoginForm import LoginForm
 from flask_wtf.csrf import CSRFProtect
+from flask_login import login_required, login_user, logout_user
+from flask_login import LoginManager
 
+
+
+
+login_manager = LoginManager()
 csrf = CSRFProtect()
 
 puma_app = Flask(__name__)
@@ -16,15 +23,15 @@ puma_app.config['MONGODB_SETTINGS'] = {
 puma_app.config['SECRET_KEY'] = 'Detective ashe is on the case'
 initialize_db(puma_app)
 csrf.init_app(puma_app)
+login_manager.init_app(puma_app)
 
 
-@puma_app.route('/register', methods=['GET', 'POST'])
+@puma_app.route('/register/', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
-
     if form.validate_on_submit():
         User(
-            name=form.username.data,
+            name=form.name.data,
             last_name=form.last_name.data,
             email=form.email.data,
             cell=form.cell.data,
@@ -33,6 +40,18 @@ def register():
 
         return render_template('index.html')
     return render_template('register.html', form=form)
+
+
+@puma_app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+
+    if request.method == "POST" and form.validate_on_submit():
+
+
+        return render_template('index.html',form = form)
+
+    return render_template('login.html',form = form)
 
 
 @puma_app.route('/')
@@ -47,44 +66,7 @@ def home_page():
     pass
 
 
-@puma_app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form.get("username")
-        password = request.form.get("password")
-        User(name=username, password=password).save()
 
-        return render_template('index.html')
-
-    return render_template('register.html')
-
-
-# def register11():
-#     """Register new user."""
-#     form = RegisterForm(request.form)
-#     if form.validate_on_submit():
-#         User.create(
-#             username=form.username.data,
-#             email=form.email.data,
-#             password=form.password.data,
-#             active=True,
-#         )
-#         flash("Thank you for registering. You can now log in.", "success")
-#         return redirect(url_for("public.home"))
-#     else:
-#         flash_errors(form)
-#     return render_template("public/register.html", form=form)
-#
-
-
-# @puma_app.route('/register')
-# def registe1r():
-#     # open a form page
-#     # check information filled in simultaneously
-#     # if information is not valid, do not allow user to register , a.k.a save in database
-#     # if user saved in database, contact with mail provider service to send a confirmation mail to the user
-#     pass
-#
 
 @puma_app.route("/dashboard")
 def dashboard():

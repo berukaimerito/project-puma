@@ -1,13 +1,19 @@
+<div class="container-narrow">
+  <h1 class="mt-5">Login</h1>
+    <br/>
+    <form id="loginForm" class="form form-register" method="POST" action="" role="form">
+           {{ form.csrf_token }}
+            <div class="form-group">
+                {{form.name.label}}
+                {{form.name(placeholder="Username", class_="form-control")}}
+            </div>
 
 
-<h2>Login</h2>
-<form action="{{ url_for('login') }}" method="post">
-    <dl>
-        <dt>Username:
-        <dd><input type="text" name="username">
-        <dt>Password:
-        <dd><input type="password" name="password">
-        <dd><input type="submit" value="Login">
-    </dl>
-</form>
+            <div class="form-group">
+                {{form.password.label}}
+                {{form.password(placeholder="Password", class_="form-control")}}
+            </div>
+            <p><input class="btn btn-primary" type="submit" value="Register"></p>
+    </form>
 
+</div>
