@@ -2,7 +2,7 @@ from mongoengine import *
 import datetime
 #from .database import db
 
-connect(host="mongodb://127.0.0.1:27017/test")
+# connect(host="mongodb://127.0.0.1:27017/test")
 
 # class Status(Enum):
 #     NEW = 'NEW'
@@ -46,11 +46,11 @@ class Script(Document):
 
 
 
-user = User(name='Kaan',last_name='Kosti',password='a')
-user.save()
+# user = User(name='Kaan',last_name='Kosti',password='a')
+# user.save()
 
 
 
-script1 =Script(in_use=True,path="neyin pathi bilmiyorum",user=user)
-script1.save()
+# script1 =Script(in_use=True,path="neyin pathi bilmiyorum",user=user)
+# script1.save()
 disconnect(alias='default')
