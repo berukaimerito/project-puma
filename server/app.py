@@ -1,27 +1,53 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from flask import Flask, render_template, Blueprint, jsonify, request
-from puma_db import models, database
-from puma_db.models import Ticker
-from puma_db.database import initialize_db
-from puma_db.models import *
+from flask import Flask, render_template, Blueprint, jsonify, request, session, make_response
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from flask_praetorian import Praetorian
+from mongodb.models import Ticker
+from mongodb.database import initialize_db
+from mongodb.models import *
 import config
 from binance.client import Client
 from binance.enums import *
 from flask import Flask
 from flask_cors import CORS, cross_origin
+from datetime import timedelta
+from functools import wraps 
+import jwt
 
 client = Client(config.API_KEY, config.API_SECRET)
 
 
 
+
 puma_app = Flask(__name__)
-puma_app.secret_key = b'somelongrandomstring'
+
+
+#puma_app.secret_key 
+puma_app.config['SECRET_KEY'] = b'somelongrandomstring'
 CORS(puma_app)
+
+puma_app.permanent_session_lifetime = timedelta(days=3)
 
 puma_app.config['MONGODB_SETTINGS'] = {
     'host': 'mongodb://localhost/test'
 }
+
+guard = Praetorian()
+
+def token_required(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        token = request/args.get('token')
+        if not token:
+            return jsonify({'ALERT!': 'TOKEN is missing!'})
+        try:
+            payload = jwt.decode(token, puma_app['SECRET_KEY'])
+        except: 
+            return jsonify({'Alert': 'Invalid Token'})
+    return decorated
+
+
 initialize_db(puma_app)
 
 
@@ -133,8 +159,7 @@ def script_overview():
 @puma_app.route("/history")
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def history():
-    candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE, "29 Sep, 2022",
-                                                "4 Nov, 2022")
+    candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE, limit=100)
 
     processed_candlestick = []
     for data in candlesticks:
@@ -147,6 +172,7 @@ def history():
         }
         processed_candlestick.append(candlestick)
     return jsonify(processed_candlestick)
+
 
 if __name__ == "__main__":
    # puma_app.run(debug=True)
