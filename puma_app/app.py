@@ -30,7 +30,7 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
-import jwt
+
 
 client = Client(config.API_KEY, config.API_SECRET)  
 alphabet = string.ascii_letters + string.digits
@@ -38,21 +38,6 @@ secret_key = ''.join(secrets.choice(alphabet) for i in range(16))
 csrf = CSRFProtect()
 db = MongoEngine()
 cors = flask_cors.CORS()
-
-
-def tokenReq(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "Authorization" in request.headers:
-            token = request.headers["Authorization"]
-            try:
-                jwt.decode(token, secret_key)
-            except:
-                return jsonify({"status": "fail", "message": "unauthorized"}), 401
-            return f(*args, **kwargs)
-        else:
-            return jsonify({"status": "fail", "message": "unauthorized"}), 401
-    return decorated
 
 
 puma = Flask(__name__)
@@ -67,7 +52,6 @@ csrf.init_app(puma)
 db.init_app(puma)
 cors.init_app(puma)
 bcrypt = Bcrypt(puma)
-jwt_m = JWTManager(puma)
 api = Api(puma)
 cors = CORS(puma, resources={r'/*': { 'origins': '*' }})
 
@@ -100,16 +84,12 @@ def register():
     pass
 
 @puma.route('/scripts')
-@tokenReq
 def scripts_overview():
     return {'k': 'v'}
 
 @puma.route('/chart')
 def chart():
     return render_template('chart.html')
-
-
-client = Client(config.API_KEY, config.API_SECRET)  
 
 @puma.route("/history")
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])

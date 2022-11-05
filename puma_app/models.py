@@ -1,6 +1,9 @@
-
+from werkzeug.security import generate_password_hash, generate_password_hash, check_password_hash
 from mongoengine import *
-from flask_bcrypt import generate_password_hash, check_password_hash
+# from flask_bcrypt import generate_password_hash, check_password_hash
+
+
+
 import string, random
 from passlib.hash import pbkdf2_sha256 as sha256
 
@@ -15,13 +18,11 @@ class User(Document):
     password = StringField(required=False)
     cell = StringField()
 
-    @staticmethod
-    def generate_hash(password):
-        return sha256.hash(password)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-    @staticmethod
-    def verify_hash(password, hash):
-        return sha256.verify(password, hash)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Portfolio(Document):
