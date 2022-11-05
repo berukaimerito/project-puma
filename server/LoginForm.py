@@ -17,19 +17,8 @@ class LoginForm(FlaskForm):
         self.user = None
 
     def validate(self):
-
-
-
-        print(self.name)
-        print(self.password)
-
-
-        user = User.objects(name=self.name)
-        print(user)
-
-
-
-        # if self.user.na:
-        #     return True
-
-        return True
+        # print(User.objects.filter(name=self.name.data).first())
+        user= User.objects.filter(name=self.name.data).first()
+        if user and user.password == self.password.data:
+            return True
+        return False
