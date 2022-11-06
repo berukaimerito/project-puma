@@ -30,9 +30,24 @@ class User(Document):
     password = StringField(required=False)
     cell = StringField()
 
+    @property
+    def get_name(self):
+        return self.name
 
-    def validatew(self, password):
-      pass
+    @get_name.setter
+    def set_name(self, s):
+        self.name = s
+
+    @property
+    def get_email(self):
+        return self.email
+    @property
+    def get_last_name(self):
+        return self.last_name
+
+    def set_last_name(self, s):
+            self.name = s
+
 
 
 

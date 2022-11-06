@@ -50,48 +50,51 @@ initialize_db(puma_app)
 @puma_app.route('/register/', methods=['GET', 'POST'])
 def register():
     data = request.json
-    hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(name=data['name'],password=hashed_password)
-    new_user.save()
-    return jsonify({'message' : 'New user created'})
+    if User.objects.filter(name=data['name']):
+        return make_response('User already exists')
+    else:
+        hashed_password = generate_password_hash(data['password'], method='sha256')
+        new_user = User(name=data['name'],password=hashed_password)
+        new_user.save()
+        return jsonify({'message' : 'New user created'})
 
 import datetime
 @puma_app.route('/login')
 def login():
-    # s
     data = request.json
     user = User.objects.filter(name=data['name']).first()
-
     if check_password_hash(user.password, data['password']):
         token = jwt.encode(
-            {'username': user.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
+            {'name': user.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
             puma_app.config['SECRET_KEY'], "HS256")
-
         return jsonify({'token': token})
 
-def token_required(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
+
+def token_required(function):
+    @wraps(function)
+    def decorated(*args, **kwargs):
         token = None
-        # ensure the jwt-token is passed with the headers
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
-        if not token: # throw error if no token provided
-            return make_response(jsonify({"message": "A valid token is missing!"}), 401)
-        try:
-           # decode the token to obtain user public_id
-            data = jwt.decode(token, puma_app.config['SECRET_KEY'], algorithms=['HS256'])
-            current_user = User.objects.filter(name=data['username']).first()
-        except:
-            return make_response(jsonify({"message": "Invalid token!"}), 401)
-         # Return the user information attached to the token
-        return f(current_user, *args, **kwargs)
-    return decorator
+        if not token:
+            return jsonify({'message': 'Token is missing !!'}), 401
 
+        data = jwt.decode(token, puma_app.config['SECRET_KEY'],algorithms=['HS256'])
+        current_user = User.objects .filter(name=data['name']).first()
+        return function(current_user, *args, **kwargs)
+    return decorated
 
-@puma_app.route('/annesi')
+#User crud
+
+@puma_app.route('/dashboard')
 @token_required
-def abc():
+def change_email(user):
+
+
+
+
+
+    return jsonify({'dsadas': '321312'})
 
     pass
 
