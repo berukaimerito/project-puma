@@ -38,12 +38,7 @@ puma_app.config['MONGODB_SETTINGS'] = {
     'host': 'mongodb://localhost/test'
 }
 puma_app.config['SECRET_KEY'] = 'Detective ashe is on the case'
-
 initialize_db(puma_app)
-# csrf.init_app(puma_app)
-
-
-# login_manager.init_app(puma_app)
 
 
 
@@ -56,19 +51,21 @@ def register():
         hashed_password = generate_password_hash(data['password'], method='sha256')
         new_user = User(name=data['name'],password=hashed_password)
         new_user.save()
+
+
         return jsonify({'message' : 'New user created'})
 
 import datetime
+import json
 @puma_app.route('/login')
 def login():
     data = request.json
     user = User.objects.filter(name=data['name']).first()
     if check_password_hash(user.password, data['password']):
-        token = jwt.encode(
-            {'name': user.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
-            puma_app.config['SECRET_KEY'], "HS256")
-        return jsonify({'token': token})
-
+         token = jwt.encode(
+             {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
+             puma_app.config['SECRET_KEY'], "HS256")
+         return jsonify({'token': token})
 
 def token_required(function):
     @wraps(function)
@@ -80,23 +77,46 @@ def token_required(function):
             return jsonify({'message': 'Token is missing !!'}), 401
 
         data = jwt.decode(token, puma_app.config['SECRET_KEY'],algorithms=['HS256'])
-        current_user = User.objects .filter(name=data['name']).first()
+        current_user = User.objects.filter(id=data['id']).first()
         return function(current_user, *args, **kwargs)
     return decorated
 
 #User crud
 
-@puma_app.route('/dashboard')
+@puma_app.route('/settings')
 @token_required
-def change_email(user):
+def change_username(user):
+    data = request.json
+    if user.check_name(data['name']):
+        user.update(name=data['name'])
+        return jsonify('username changed')
+    return jsonify('username already exists')
+
+@puma_app.route('/settings/delete')
+@token_required
+def delete_user(user):
+    User.objects(id=user.id).delete()
 
 
 
 
 
-    return jsonify({'dsadas': '321312'})
 
-    pass
+
+
+    return jsonify('User deleted')
+
+
+
+
+
+
+@puma_app.route('/annesi')
+@token_required
+def change_email11(user):
+
+    return jsonify({'dasdasd':"asdasdasdasdasdasds"})
+
 
 
 

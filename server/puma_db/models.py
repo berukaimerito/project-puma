@@ -11,7 +11,6 @@ from werkzeug.security import check_password_hash
 
 connect(host="mongodb://127.0.0.1:27017/test")
 
-
 # class Status(Enum):
 #     NEW = 'NEW'
 #     ONGOING = 'ONGOING'
@@ -23,35 +22,29 @@ key = Fernet.generate_key()
 crypter = Fernet(key)
 
 
-class User(Document):
+class User(Document, object):
     name = StringField(required=False)
     last_name = StringField(required=False)
     email = EmailField(required=False)
     password = StringField(required=False)
     cell = StringField()
 
+
+
+    @staticmethod
+    def check_name(name):
+        return False if User.objects.filter(name=name).first() else True
+
+
+
+
     @property
-    def get_name(self):
-        return self.name
+    def mail(self):
+        return self.__email
 
-    @get_name.setter
-    def set_name(self, s):
-        self.name = s
-
-    @property
-    def get_email(self):
-        return self.email
-    @property
-    def get_last_name(self):
-        return self.last_name
-
-    def set_last_name(self, s):
-            self.name = s
-
-
-
-
-
+    @mail.setter
+    def mail(self, mail):
+        self.__email = mail
 
         # if self.password.decode('utf8') == password:
         #     return True
