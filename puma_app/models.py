@@ -1,15 +1,5 @@
 from werkzeug.security import generate_password_hash, generate_password_hash, check_password_hash
 from mongoengine import *
-# from flask_bcrypt import generate_password_hash, check_password_hash
-
-
-
-import string, random
-from passlib.hash import pbkdf2_sha256 as sha256
-
-# class RoleException(Exception):
-#     pass
-# allowed_roles = ["admin", "operator"]
 
 class User(Document):
     name = StringField(required=False)

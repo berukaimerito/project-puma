@@ -1,4 +1,8 @@
+from datetime import timedelta, datetime
 from functools import wraps
+import string
+import config
+import secrets
 from flask import (
     Flask,
     render_template, 
@@ -12,24 +16,16 @@ from flask import (
     url_for,
     redirect
  )
-from passlib.hash import pbkdf2_sha256 as sha256
 from binance import Client
 from flask_wtf.csrf import CSRFProtect
-from flask_cors import CORS, cross_origin
 import flask_cors
-import string
-import secrets
-from datetime import datetime, timedelta
 from flask_cors import CORS 
 from flask_bcrypt import Bcrypt
-import config
+from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_restful_swagger_2 import Api
 from flask_mongoengine import MongoEngine
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
+import jwt
 
 
 client = Client(config.API_KEY, config.API_SECRET)  
@@ -56,32 +52,10 @@ api = Api(puma)
 cors = CORS(puma, resources={r'/*': { 'origins': '*' }})
 
 
-
 @puma.route("/")
 @puma.route("/index")
 def index():
     return '<h1>Welcome home</h1>'
-
-    # # auth = request.authorization
-    # # if auth and auth.password == 'password':
-    # token = jwt.encode({'user': auth.username, 'exp':datetime.datetime.utcnow()+ datetime.timedelta(minutes=30) }, puma.config['SECRET_KEY'])
-
-@puma.route("/login", methods = ['POST'])
-def login():
-
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-
-    if username != "test" or password != "test": ## QUERY 
-        return jsonify({"msg": "Bad credentials"}), 401
-
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
-
- 
-@puma.route("/register")
-def register():
-    pass
 
 @puma.route('/scripts')
 def scripts_overview():
@@ -91,8 +65,33 @@ def scripts_overview():
 def chart():
     return render_template('chart.html')
 
+
+@puma.route('/register/', methods=['GET', 'POST'])
+def register():
+    data = request.json
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+    new_user = User(name=data['name'],password=hashed_password)
+    new_user.save()
+    return jsonify({'message' : 'New user created'})
+
+
+@puma.route('/login')
+def login():
+    # s
+    data = request.json
+    user = User.objects.filter(name=data['name']).first()
+
+    if check_password_hash(user.password, data['password']):
+        token = jwt.encode(
+            {'username': user.name, 'exp': datetime.utcnow() + timedelta(minutes=45)},
+            puma.config['SECRET_KEY'], "HS256")
+
+        return jsonify({'token': token})
+
+
+
 @puma.route("/history")
-@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+@token_required
 def history():
     candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE, limit=100)
 
