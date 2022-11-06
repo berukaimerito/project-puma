@@ -40,7 +40,7 @@ db = MongoEngine()
 cors = flask_cors.CORS()
 
 
-puma = Flask(__name__, static_folder="static", template_folder="templates")
+puma = Flask(__name__, static_folder="static")
 
 
 puma.config['MONGODB_SETTINGS'] = {'host': 'mongodb://localhost/test'}
@@ -61,13 +61,15 @@ cors = CORS(puma, resources={r'/*': { 'origins': '*' }})
 def index():
     return '<h1>Welcome home</h1>'
 
+
 @puma.route('/scripts')
 def scripts_overview():
     return {'k': 'v'}
 
+
 @puma.route('/chart')
 def chart():
-    return render_template('chart.html')
+    return render_template("chart.html")
 
 
 @puma.route('/register/', methods=['GET', 'POST'])
@@ -93,7 +95,6 @@ def login():
         return jsonify({'token': token})
 
 
-
 @puma.route("/history")
 def history():
     candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE, limit=100)
@@ -112,4 +113,4 @@ def history():
 
 
 if __name__ == "__main__":
-   puma.run(host="127.0.0.1", port=5000, debug=True)
+    puma.run(host="127.0.0.1", port=5000, debug=True)
