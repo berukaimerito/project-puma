@@ -1,3 +1,6 @@
+import os
+import gunicorn
+from pathlib import Path
 from datetime import timedelta, datetime
 from functools import wraps
 import string
@@ -27,6 +30,7 @@ from flask_restful_swagger_2 import Api
 from flask_mongoengine import MongoEngine
 import jwt
 
+env_path = Path(".") / ".pumavenv"
 
 client = Client(config.API_KEY, config.API_SECRET)  
 alphabet = string.ascii_letters + string.digits
@@ -36,7 +40,7 @@ db = MongoEngine()
 cors = flask_cors.CORS()
 
 
-puma = Flask(__name__)
+puma = Flask(__name__, static_folder="static", template_folder="templates")
 
 
 puma.config['MONGODB_SETTINGS'] = {'host': 'mongodb://localhost/test'}
@@ -91,7 +95,6 @@ def login():
 
 
 @puma.route("/history")
-@token_required
 def history():
     candlesticks = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_1MINUTE, limit=100)
 

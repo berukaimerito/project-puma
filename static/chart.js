@@ -51,7 +51,7 @@ binanceSocket.onmessage = function (event) {
 	var candlestick = message.k;
 
 	console.log(candlestick)
-	
+
 	candleSeries.update({
 		time: candlestick.t / 1000,
 		open: candlestick.o,
@@ -59,4 +59,4 @@ binanceSocket.onmessage = function (event) {
 		low: candlestick.l,
 		close: candlestick.c
 	})
-} 	
+}
