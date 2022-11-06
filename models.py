@@ -7,12 +7,10 @@ class User(Document):
     email = EmailField(required=False)
     password = StringField(required=False)
     cell = StringField()
+    @staticmethod
+    def check_name(name):
+        return False if User.objects.filter(name=name).first() else True
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
 
 class Portfolio(Document):
