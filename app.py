@@ -29,6 +29,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_restful_swagger_2 import Api
 from flask_mongoengine import MongoEngine
 import jwt
+import datetime
 
 env_path = Path(".") / ".pumavenv"
 
@@ -56,6 +57,21 @@ api = Api(puma)
 cors = CORS(puma, resources={r'/*': { 'origins': '*' }})
 
 
+def token_required(function):
+    @wraps(function)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token:
+            return jsonify({'message': 'Token is missing !!'}), 401
+
+        data = jwt.decode(token, puma.config['SECRET_KEY'], algorithms=['HS256'])
+        current_user = User.objects .filter(name=data['name']).first()
+        return function(current_user, *args, **kwargs)
+    return decorated
+
+
 @puma.route("/")
 @puma.route("/index")
 def index():
@@ -75,23 +91,23 @@ def chart():
 @puma.route('/register/', methods=['GET', 'POST'])
 def register():
     data = request.json
-    hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(name=data['name'],password=hashed_password)
-    new_user.save()
-    return jsonify({'message' : 'New user created'})
+    if User.objects.filter(name=data['name']):
+        return make_response('User already exists')
+    else:
+        hashed_password = generate_password_hash(data['password'], method='sha256')
+        new_user = User(name=data['name'],password=hashed_password)
+        new_user.save()
+        return jsonify({'message' : 'New user created'})
 
 
 @puma.route('/login')
 def login():
-    # s
     data = request.json
     user = User.objects.filter(name=data['name']).first()
-
     if check_password_hash(user.password, data['password']):
         token = jwt.encode(
-            {'username': user.name, 'exp': datetime.utcnow() + timedelta(minutes=45)},
+            {'name': user.name, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
             puma.config['SECRET_KEY'], "HS256")
-
         return jsonify({'token': token})
 
 
