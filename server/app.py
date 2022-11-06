@@ -2,8 +2,6 @@ import flask
 import flask_praetorian
 from flask import \
     Flask, render_template, Blueprint, jsonify, request, redirect, session, flash, make_response
-from flask_restful.utils.crypto import decrypt
-
 from puma_db import models, database
 from puma_db.models import Ticker
 from puma_db.database import *
@@ -101,13 +99,19 @@ def delete_user(user):
 
 
 
-
-
-
     return jsonify('User deleted')
 
 
-
+@puma_app.route('/settings/password')
+@token_required
+def change_password(user):
+    data = request.json
+    pswrd = data['password']
+    if user:
+        user.update(password=generate_password_hash(pswrd, method='sha256'))
+        return jsonify('Password change in silly level')
+    else:
+        return jsonify('Not success')
 
 
 
