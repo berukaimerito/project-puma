@@ -1,23 +1,17 @@
 import os
 import gunicorn
 from pathlib import Path
-from datetime import  datetime
+from datetime import datetime
 from functools import wraps
 import string
 import config
 import secrets
 from flask import (
     Flask,
-    render_template, 
-    Blueprint,
+    render_template,
     jsonify,
     request,
-    redirect, 
-    session,
-    flash,
     make_response,
-    url_for,
-    redirect
  )
 from binance import Client
 from flask_wtf.csrf import CSRFProtect
