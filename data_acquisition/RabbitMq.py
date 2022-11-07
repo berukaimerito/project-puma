@@ -7,7 +7,7 @@ import threading
 import json
 import pika
 
-class RabbitMQ(object):
+class RabbitMQ:
 
     # buraya PUMA FLASK aplikasyonu konfigure edilecek.gerisini RabbitMQ file'indaki class'i cagirman yetiyo
     # yapma ya
@@ -17,7 +17,7 @@ class RabbitMQ(object):
         self.queue = queue
         self.config = self.app.config
 
-        self.rabbitmq_server_host = None
+        self.rabbitmq_server_host = None #
         self.rabbitmq_server_username = None
         self.rabbitmq_server_password = None
 
@@ -35,6 +35,9 @@ class RabbitMQ(object):
     # valid config value such as server host, username and password
     def valid_config(self):
         if not self.config.get('RABBITMQ_HOST'):
+            #  import pika
+            #  connection_params = pika.ConnectionParameters('localhost')
+            #
             raise Exception("The rabbitMQ application must configure host.")
         self.rabbitmq_server_host = self.config.get('RABBITMQ_HOST')
         self.rabbitmq_server_username = self.config.get('RABBITMQ_USERNAME')

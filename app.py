@@ -20,6 +20,10 @@ from flask_cors import CORS
 from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mongoengine import MongoEngine
+#from flask_celery import make_celery  ## DESIGN PATTERN ICIN (?)
+from celery import Celery
+
+
 import jwt
 
 env_path = Path(".") / ".pumavenv"
@@ -38,6 +42,22 @@ puma = Flask(__name__, static_folder="static")
 puma.config['MONGODB_SETTINGS'] = {'host': 'mongodb://localhost/test'}
 puma.config['SECRET_KEY'] = 'ajadlkjskfljdlkfsdjklf'
 
+# puma.config['CELERY_BROKER_URL'] = 'pyamqp://guest:guest@rabbit:5672'
+# puma.config['CELERY_BACKEND'] = ''
+# puma.config.update(CELERY_CONFIG={
+#     'broker_url': 'redis://localhost:6379',
+#     'result_backend': 'redis://localhost:6379',
+# })
+# celery = make_celery(puma)
+# app = Celery('tasks', broker='rabbitmq://localhost:5672')
+
+puma.config['CELERY_BROKER_URL'] = 'amqp://guest:guest@localhost:5672'
+celery = Celery(puma.name, broker=puma.config['CELERY_BROKER_URL'])
+celery.conf.update(puma.config)
+
+#puma.config.from_object(__name__ + ".ConfigClass")
+
+
 csrf.init_app(puma)
 db.init_app(puma)
 cors.init_app(puma)
@@ -51,8 +71,17 @@ cors = CORS(puma, resources={r'/*': { 'origins': '*' }})
 def index():
     return '<h1>Welcome home</h1>'
 
+@puma.route('/celery/<name>')
+def process(name):
+    reverse.delay(name)
+    return 'Welcome to Celery!'
 
 
+
+
+@celery.task
+def reverse(string):
+    return string[::-1]
 
 @puma.route('/chart')
 def chart():

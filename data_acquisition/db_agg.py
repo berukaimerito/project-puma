@@ -4,7 +4,6 @@
 
 
 
-
 ## BURAYA ACQUIRE DATA'DAN METODIZE, EVET METODIZE ETTIGIN TICKER TOPLAMA ISLEMLERINI
 
 
@@ -16,7 +15,9 @@
 
 
 ## FLASK ILE CELERY TASK ATADIGIN
+
 ## acquire_data.py 'dan importlanan methodu cagirarak save yapocaksin
+
 
 from pymongo import MongoClient   ## pymongo burada ayni kapiya cikiyo  maksat bir tane python fileinda baglanmak
 # from flask-mongoengine import mongoengine
