@@ -1,5 +1,5 @@
 import flask
-import flask_praetorian
+
 from flask import \
     Flask, render_template, Blueprint, jsonify, request, redirect, session, flash, make_response
 from puma_db import models, database
@@ -9,18 +9,14 @@ from puma_db.models import *
 from RegisterForm import RegisterForm
 from LoginForm import LoginForm
 from flask_wtf.csrf import CSRFProtect
-from flask_login import login_required, login_user, logout_user
-from flask_login import LoginManager
+
+
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
 
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
 
 key = Fernet.generate_key()
 crypter = Fernet(key)
