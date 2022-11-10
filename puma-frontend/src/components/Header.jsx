@@ -39,11 +39,15 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="justify-content-end" style={{ width: '100%' }}>
-              <LinkContainer to="/dashboard">
-                <Nav.Link>
-                  <FontAwesomeIcon icon={faGaugeHigh} /> Dashboard
-                </Nav.Link>
-              </LinkContainer>
+              {
+                currentUser && (
+                  <LinkContainer to="/dashboard">
+                    <Nav.Link>
+                      <FontAwesomeIcon icon={faGaugeHigh} /> Dashboard
+                    </Nav.Link>
+                  </LinkContainer>
+                )
+              }
               {currentUser ? (
                 <NavDropdown title={currentUser.email} id="username">
                   <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>

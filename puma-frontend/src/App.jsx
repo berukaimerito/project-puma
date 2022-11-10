@@ -8,6 +8,7 @@ import Login from './pages/Login'
 import Portfolio from './pages/Portfolio'
 import Profile from './pages/Profile'
 import Register from './pages/Register'
+import './App.css'
 
 function App() {
   return (
@@ -23,7 +24,6 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />} />
         </Routes>
       </main>
-      <Footer />
     </Router>
   )
 }
