@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash, generate_password_hash, check_password_hash
+
 from mongoengine import *
 
 class User(Document):
@@ -7,9 +7,11 @@ class User(Document):
     email = EmailField(required=False)
     password = StringField(required=False)
     cell = StringField()
+    #portfolio = EmbeddedDocumentField()
     @staticmethod
     def check_name(name):
         return False if User.objects.filter(name=name).first() else True
+
 
 
 
@@ -26,20 +28,15 @@ class Log(Document):
 class Ticker(Document):
     symbol = StringField()
     timestamp = DateTimeField()
-    # timeseries: [
-    #     {
-    #         'oneMinute': ObjectIdField,
-    #         'fifteenMinute': ObjectIdField,
-    #         'oneHour':ObjectIdField,
-    #         'oneDay': ObjectIdField,
-    #     }
-    # ]
-    real_price = LongField()
 
-# ticker = Ticker(symbol='BTCUSDT',
-#                 timestamp='200'
-#
-#                 )
+
+# class Candles(Document):
+#     timestamp,
+#     length, --- interval
+#     high,
+#     low,
+#     open,
+ #     close
 
 class Action(Document):
     _type = BooleanField()
