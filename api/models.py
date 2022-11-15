@@ -1,5 +1,10 @@
-
 from mongoengine import *
+
+class Portfolio(EmbeddedDocument):
+    symbol = StringField()
+    amount = IntField()
+    current_prices = FloatField()
+
 
 class User(Document):
     name = StringField(required=False)
@@ -7,18 +12,11 @@ class User(Document):
     email = EmailField(required=False)
     password = StringField(required=False)
     cell = StringField()
-    #portfolio = EmbeddedDocumentField()
+    portfolio = EmbeddedDocumentField(Portfolio)
+
     @staticmethod
     def check_name(name):
         return False if User.objects.filter(name=name).first() else True
-
-
-
-
-class Portfolio(Document):
-    symbol = StringField()
-    amount = IntField()
-    current_prices = FloatField()
 
 
 class Log(Document):
@@ -30,19 +28,14 @@ class Ticker(Document):
     timestamp = DateTimeField()
 
 
-# class Candles(Document):
-#     timestamp,
-#     length, --- interval
-#     high,
-#     low,
-#     open,
- #     close
+class Candles(Document):
+    timestamp = StringField()
+    length = StringField()
+    high = StringField()
+    low = StringField()
+    open = StringField()
+    close = StringField()
 
-class Action(Document):
-    _type = BooleanField()
-    amount = LongField()
-    ticker = ReferenceField(Ticker)
-    # script = ReferenceField(Script)
 
 class Script(Document):
     in_use = BooleanField()
@@ -50,7 +43,8 @@ class Script(Document):
     user = ReferenceField(User)
 
 
-# user = User(name='rodri',last_name='alonso',password='a')
-# user.save()
-
-# signals.post_init.connect(update_modified)
+class Action(Document):
+    _type = BooleanField()
+    amount = LongField()
+    ticker = ReferenceField(Ticker)
+    script = ReferenceField(Script)
