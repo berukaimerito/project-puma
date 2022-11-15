@@ -7,7 +7,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User
+from models.user_model import UserModel
 from api.db import db
 
 env_path = Path("..") / ".pumavenv"
@@ -22,7 +22,7 @@ def token_required(function):
         if not token:
             return jsonify({'message': 'Token is missing !!'}), 401
         data = jwt.decode(token, puma.config['SECRET_KEY'], algorithms=['HS256'])
-        current_user = User.objects.filter(id=data['id']).first()
+        current_user = UserModel.objects.filter(id=data['id']).first()
         return function(current_user, *args, **kwargs)
 
     return decorated
@@ -74,11 +74,11 @@ def change_username(user):
 @puma.route('/register', methods=['GET', 'POST'])
 def register():
     data = request.json
-    if User.objects.filter(name=data['name']):
+    if UserModel.objects.filter(name=data['name']):
         return make_response('User already exists')
     else:
         hashed_password = generate_password_hash(data['password'], method='sha256')
-        new_user = User(name=data['name'],password=hashed_password)
+        new_user = UserModel(name=data['name'],password=hashed_password)
         new_user.save()
         return jsonify({'message' : 'New user created'})
 
@@ -87,7 +87,7 @@ def register():
 @puma.route('/login')
 def login():
     data = request.json
-    user = User.objects.filter(name=data['name']).first()
+    user = UserModel.objects.filter(name=data['name']).first()
     if check_password_hash(user.password, data['password']):
          token = jwt.encode(
              {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
@@ -97,7 +97,7 @@ def login():
 @puma.route('/settings/delete')
 @token_required
 def delete_user(user):
-    User.objects(id=user.id).delete()
+    UserModel.objects(id=user.id).delete()
     return jsonify('User deleted')
 
 
