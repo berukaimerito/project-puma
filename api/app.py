@@ -30,11 +30,19 @@ def token_required(function):
 
 
 
-
+from resources.user_resource import User
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
 api = Api(puma)
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
+api.add_resource(User,"/denee")
+
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 puma.config["MONGODB_SETTINGS"] = [
     {
@@ -44,6 +52,7 @@ puma.config["MONGODB_SETTINGS"] = [
         "alias": "default",
     }
 ]
+puma.config['WTF_CSRF_ENABLED'] = False
 puma.config["SECRET_KEY"] = "secretsecret"
 puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
 
@@ -71,17 +80,17 @@ def change_username(user):
         return jsonify('username changed')
     return jsonify('username already exists')
 
-@puma.route('/register', methods=['GET', 'POST'])
-def register():
-    data = request.json
-    if UserModel.objects.filter(name=data['name']):
-        return make_response('User already exists')
-    else:
-        hashed_password = generate_password_hash(data['password'], method='sha256')
-        new_user = UserModel(name=data['name'],password=hashed_password)
-        new_user.save()
-        return jsonify({'message' : 'New user created'})
-
+# @puma.route('/register', methods=['GET', 'POST'])
+# def register():
+#     data = request.json
+#     if UserModel.objects.filter(name=data['name']):
+#         return make_response('User already exists')
+#     else:
+#         hashed_password = generate_password_hash(data['password'], method='sha256')
+#         new_user = UserModel(name=data['name'],password=hashed_password)
+#         new_user.save()
+#         return jsonify({'message' : 'New user created'})
+#
 
 
 @puma.route('/login')

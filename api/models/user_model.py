@@ -12,6 +12,22 @@ class UserModel(Document):
     cell = StringField()
     portfolio = EmbeddedDocumentField(PortfolioModel)
 
+
     @staticmethod
     def check_name(name):
-        return False if UserModel.objects.filter(name=name).first() else True
+        return True if UserModel.objects.filter(name=name).first() else False
+
+    @staticmethod
+    def check_mail(mail):
+        return False if UserModel.objects.filter(email=mail).first() else True
+    @staticmethod
+    def getquery_name(name):
+        return UserModel.objects.filter(name=name).first()
+
+    @staticmethod
+    def getquery_mail(mail):
+        return UserModel.objects.filter(email=mail).first()
+
+
+
+
