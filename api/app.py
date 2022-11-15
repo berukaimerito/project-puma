@@ -1,16 +1,14 @@
-import os
 import datetime
 import json
 from functools import wraps
 from pathlib import Path
-import jwt
 from flask import Flask, request, jsonify, make_response
-from flask_mongoengine import MongoEngine
+from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User
-
+from api.db import db
 
 env_path = Path("..") / ".pumavenv"
 
@@ -32,9 +30,11 @@ def token_required(function):
 
 
 
+
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
 api = Api(puma)
+
 
 puma.config["MONGODB_SETTINGS"] = [
     {
@@ -45,12 +45,15 @@ puma.config["MONGODB_SETTINGS"] = [
     }
 ]
 puma.config["SECRET_KEY"] = "secretsecret"
+puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
 
 csrf = CSRFProtect()
 csrf.init_app(puma)
 
-db = MongoEngine()
 db.init_app(puma)
+
+jwt = JWTManager(puma)
+# jwt = JWT(app, authenticate, identity)  # Auto Creates /auth endpoint
 
 
 
