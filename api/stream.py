@@ -1,0 +1,2 @@
+symbols = ['AVAXUSDT','BTCUSDT','ETHUSDT']
+

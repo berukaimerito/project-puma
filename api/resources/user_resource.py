@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, current_user
 from flask import jsonify, json
 from api.models.user_model import *
 from api.common.encoder import MongoEncoder
@@ -56,6 +56,22 @@ class UserRegister(Resource):
     def post(self):
         data = UserRegister.parser.parse_args()
         username = data['username']
-        mail = data['mai']
+        mail = data['mail']
         cell = data['cell']
         password = data['password']
+
+        if UserModel.getquery_name(username) or UserModel.getquery_mail(mail):
+            return {'message': 'Username or email has already been created, aborting.'}, 400
+
+        # user = UserModel.get111(**data)
+        # print(user)
+        # user.save()
+        user = UserModel(
+            username=username,
+            mail=mail,
+            cell = cell,
+            password = UserModel.hash_password(password)
+        )
+        user.save()
+
+        return {'message': 'user has been created successfully.'}, 201

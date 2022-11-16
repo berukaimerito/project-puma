@@ -8,6 +8,7 @@ from flask_restful import Api
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user_model import UserModel
+
 from api.db import db
 
 env_path = Path("..") / ".pumavenv"
@@ -30,14 +31,20 @@ def token_required(function):
 
 
 
-from resources.user_resource import User
+from resources.user_resource import User,UserRegister
+from resources.homepage import Home
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
 api = Api(puma)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-api.add_resource(User,"/denee")
+api.add_resource(User,"/login")
+api.add_resource(UserRegister,"/register")
+api.add_resource(Home,"/homepage")
+
+
+
 
 
 
@@ -64,10 +71,11 @@ db.init_app(puma)
 jwt = JWTManager(puma)
 # jwt = JWT(app, authenticate, identity)  # Auto Creates /auth endpoint
 
+from flask_jwt_extended import jwt_required
 
 
-@puma.route("/")
-@puma.route("/index")
+@jwt_required()
+@puma.route("/index", methods=['POST'])
 def index():
     return '<h1>Welcome homepage</h1>'
 
@@ -80,28 +88,6 @@ def change_username(user):
         return jsonify('username changed')
     return jsonify('username already exists')
 
-# @puma.route('/register', methods=['GET', 'POST'])
-# def register():
-#     data = request.json
-#     if UserModel.objects.filter(name=data['name']):
-#         return make_response('User already exists')
-#     else:
-#         hashed_password = generate_password_hash(data['password'], method='sha256')
-#         new_user = UserModel(name=data['name'],password=hashed_password)
-#         new_user.save()
-#         return jsonify({'message' : 'New user created'})
-#
-
-
-@puma.route('/login')
-def login():
-    data = request.json
-    user = UserModel.objects.filter(name=data['name']).first()
-    if check_password_hash(user.password, data['password']):
-         token = jwt.encode(
-             {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
-             puma.config['SECRET_KEY'], "HS256")
-         return jsonify({'token': token})
 
 @puma.route('/settings/delete')
 @token_required
@@ -127,3 +113,54 @@ puma.run(host="127.0.0.1", port=5000, debug=True)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @puma.route('/register', methods=['GET', 'POST'])
+# def register():
+#     data = request.json
+#     if UserModel.objects.filter(name=data['name']):
+#         return make_response('User already exists')
+#     else:
+#         hashed_password = generate_password_hash(data['password'], method='sha256')
+#         new_user = UserModel(name=data['name'],password=hashed_password)
+#         new_user.save()
+#         return jsonify({'message' : 'New user created'})
+#
+
+#
+# @puma.route('/login')
+# def login():
+#     data = request.json
+#     user = UserModel.objects.filter(name=data['name']).first()
+#     if check_password_hash(user.password, data['password']):
+#          token = jwt.encode(
+#              {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
+#              puma.config['SECRET_KEY'], "HS256")
+#          return jsonify({'token': token})
