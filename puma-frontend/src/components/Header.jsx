@@ -24,6 +24,10 @@ const Header = () => {
     navigate('/profile')
   }
 
+  const scriptHandler = () => {
+    navigate('/script')
+  }
+
   const portfolioHandler = () => {
     navigate('/portfolio')
   }
@@ -52,6 +56,7 @@ const Header = () => {
                 <NavDropdown title={currentUser.email} id="username">
                   <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                   <NavDropdown.Item onClick={profileHandler}>Profile</NavDropdown.Item>
+                  <NavDropdown.Item onClick={scriptHandler}>Script</NavDropdown.Item>
                   <NavDropdown.Item onClick={portfolioHandler}>My-Portfolio</NavDropdown.Item>
                 </NavDropdown>
               ) : (

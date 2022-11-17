@@ -16,7 +16,7 @@ const Home = () => {
   }, [])
 
   const getStarted = () => {
-    navigate('/login')
+    navigate('/register')
   }
 
   return (
@@ -27,7 +27,7 @@ const Home = () => {
       >
         <Container className="text-center">
           <h1 style={{ fontSize: '6.2em' }}>Test your strategy</h1>
-          <p style={{ fontSize: '1.8em' }}>Find out how well you bot can trade within minutes!</p>
+          <p style={{ fontSize: '1.8em' }}>Find out how well your bot can trade within minutes!</p>
           <Button variant="warning" size="lg" onClick={getStarted}>
             <h1>Get Started</h1>
           </Button>

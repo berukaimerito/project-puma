@@ -8,7 +8,9 @@ import Login from './pages/Login'
 import Portfolio from './pages/Portfolio'
 import Profile from './pages/Profile'
 import Register from './pages/Register'
+
 import './App.css'
+import Script from './pages/Script'
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/script" element={<Script />} />
         </Routes>
       </main>
     </Router>
@@ -29,3 +32,4 @@ function App() {
 }
 
 export default App
+
