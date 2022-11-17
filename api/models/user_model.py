@@ -32,3 +32,10 @@ class UserModel(Document):
     def getquery_mail(mail):
         return UserModel.objects.filter(mail=mail).first()
 
+
+    @staticmethod
+    def getquery_id(id):
+        return UserModel.objects.filter(id=id).first()
+
+
+

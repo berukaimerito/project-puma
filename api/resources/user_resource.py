@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_access_token, jwt_required, current_user
+from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
 from flask import jsonify, json
 from api.models.user_model import *
 from api.common.encoder import MongoEncoder
@@ -13,9 +13,6 @@ class User(Resource):
 
     parser.add_argument('password', type=str, required=True,
                         help='This field cannot be left blank')
-
-    def get(self):
-        pass
 
     def post(self):
         data = User.parser.parse_args()
@@ -63,15 +60,24 @@ class UserRegister(Resource):
         if UserModel.getquery_name(username) or UserModel.getquery_mail(mail):
             return {'message': 'Username or email has already been created, aborting.'}, 400
 
-        # user = UserModel.get111(**data)
-        # print(user)
-        # user.save()
         user = UserModel(
             username=username,
             mail=mail,
-            cell = cell,
-            password = UserModel.hash_password(password)
+            cell=cell,
+            password=UserModel.hash_password(password)
         )
         user.save()
 
         return {'message': 'user has been created successfully.'}, 201
+
+
+from api.utils import *
+
+
+class DeleteUser(Resource):
+
+    @jwt_required()
+    def get(self):
+        user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
+        UserModel.objects(id=user_id).delete()
+        pass

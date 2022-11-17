@@ -35,12 +35,23 @@ var candleSeries = chart.addCandlestickSeries({
 	wickUpColor: 'rgba(255, 144, 0, 1)',
 });
 
-fetch('http://localhost:5000/history')
+
+
+
+fetch('http://127.0.0.1:5000/dashboard/chart/')
 	.then((r) => r.json())
 	.then((response) => {
 		console.log(response)
 		candleSeries.setData(response);
 	})
+
+
+
+
+var symboljs = '{{ symbol }}';
+var intervaljs = '{{ interval }}';
+console.log(symboljs)
+
 
 
 var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@kline_1m");
