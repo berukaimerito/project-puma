@@ -9,6 +9,7 @@ const Register = () => {
   const { isLoggedIn, loading, user: currentUser } = useSelector((state) => state.auth)
 
   const [name, setName] = useState(currentUser ? currentUser.name : '')
+  const [surname, setSurname] = useState(currentUser ? currentUser.surname : '')
   const [email, setEmail] = useState(currentUser ? currentUser.email : '')
   
   const [password, setPassword] = useState('')
@@ -40,6 +41,7 @@ const Register = () => {
       <h1>Edit profile</h1>
       {message && <Message variant="danger">{message}</Message>}
       <Form onSubmit={submitHandler}>
+      <Row lg={2}>
         <Form.Group controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -49,6 +51,17 @@ const Register = () => {
             onChange={(e) => setName(e.target.value)}
           ></Form.Control>
         </Form.Group>
+
+        <Form.Group controlId="surname">
+          <Form.Label>Surname</Form.Label>
+          <Form.Control
+            type="surname"
+            placeholder="Enter surname"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+        </Row>
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
@@ -78,10 +91,12 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-
-        <Button type="submit" variant="primary">
-          Save
+        <br />
+        <div className="d-grid gap-2">
+        <Button type="submit" variant="dark" size="lg">
+          Edit
         </Button>
+        </div>
       </Form>
 
     </FormContainer>

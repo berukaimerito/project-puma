@@ -19,7 +19,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/')
+      navigate('/dashboard')
     }
   }, [isLoggedIn, navigate])
 
@@ -53,9 +53,12 @@ const Login = () => {
           ></Form.Control>
         </Form.Group>
 
-        <Button type="submit" variant="primary">
-          Sign In
+        <br />
+        <div className="d-grid gap-2">
+        <Button type="submit" variant="dark" size="lg" style={{marginTop: "20px"}}>
+          Login
         </Button>
+        </div>
       </Form>
 
       <Row className="py-3">

@@ -7,6 +7,7 @@ import Message from '../components/Message'
 
 const Register = () => {
   const [name, setName] = useState('')
+  const [surname, setSurname] = useState('')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -38,6 +39,7 @@ const Register = () => {
       <h1>Sign up</h1>
       {message && <Message variant="danger">{message}</Message>}
       <Form onSubmit={submitHandler}>
+      <Row lg={2}>
         <Form.Group controlId="name">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -47,6 +49,18 @@ const Register = () => {
             onChange={(e) => setName(e.target.value)}
           ></Form.Control>
         </Form.Group>
+
+        <Form.Group controlId="surname">
+          <Form.Label>Surname</Form.Label>
+          <Form.Control
+            type="surname"
+            placeholder="Enter surname"
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+        </Row>
+
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
@@ -76,10 +90,12 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-
-        <Button type="submit" variant="primary">
+        <br />
+        <div className="d-grid gap-2">
+        <Button type="submit" variant="dark" size="lg">
           Register
         </Button>
+        </div>
       </Form>
 
       <Row className="py-3">
