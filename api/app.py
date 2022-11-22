@@ -5,7 +5,7 @@ from pathlib import Path
 
 import requests
 from flask import Flask, request, jsonify, make_response, redirect, url_for, render_template
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,14 +34,15 @@ def token_required(function):
 
 from resources.user_resource import User, UserRegister, DeleteUser
 from resources.homepage import Home
-from api.config import API_SECRET,API_KEY
+from api.config import API_SECRET, API_KEY
+
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
 api = Api(puma)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-api.add_resource(User, "/login")
 api.add_resource(UserRegister, "/register")
+api.add_resource(User, "/login")
 api.add_resource(Home, "/homepage")
 api.add_resource(DeleteUser, "/delete")
 
@@ -65,7 +66,6 @@ csrf.init_app(puma)
 db.init_app(puma)
 jwt = JWTManager(puma)
 
-
 # jwt = JWT(app, authenticate, identity)  # Auto Creates /auth endpoint
 
 
@@ -88,44 +88,68 @@ jwt = JWTManager(puma)
 # def show(user_id, username):
 #     pass
 #
-from binance import Client
+from api.get_data import get_historical_kline
 
-@puma.route("/dashboard/chart", defaults={'symbol': 'AVAXUSDT', 'interval': '4h'}, methods=['POST','GET'])
 
+@puma.route("/chart", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
+@puma.route("/chart/<symbol>/<interval>")
 def default_chart(symbol, interval):
-    # print(symbol,interval)
-    # data = request.json
-    return redirect(url_for('display_charts',symbol=symbol,interval=interval))
-    # return redirect(url_for('charts', symbol=symbol,interval=interval))
-@puma.route("/dashboard/chart/<symbol>/<interval>")
-def display_charts(symbol,interval):
+    return get_historical_kline(symbol, interval)
+    # list of dictionries
+    # [{'time': 1661702400.0, 'open': '20007.60', 'high': '20140.00', 'low': '19942.00', 'close': '19962.50'},
+    #  {'time': 1661716800.0, 'open': '19962.60', 'high': '20035.00', 'low': '19508.00', 'close': '19547.50'}
 
 
-    client = Client(API_KEY,API_SECRET)
-    one_m = Client.KLINE_INTERVAL_1MINUTE,
-    thirty_min = Client.KLINE_INTERVAL_30MINUTE
+main_page_currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT', 'DOGEUSDT', 'MATICUSDT']
 
 
-    # store it in a own dictionary as keys: values , as keys being ofc {ticker_symbol} and v beign JSON? or just candlestick object.
-    candlesticks = client.get_historical_klines(symbol, Client.KLINE_INTERVAL_1MINUTE, limit=100)
-
-    processed_candlestick = []
-    for data in candlesticks:
-        candlestick = {
-            'time': data[0] / 1000,
-            'open': data[1],
-            'high': data[2],
-            'low': data[3],
-            'close': data[4]
-        }
-        processed_candlestick.append(candlestick)
-
-        # method to save in db.Ticker.TimeSeries[]
-
-    return processed_candlestick
+@puma.route("/currencies", methods=['GET'])
+def live_currencies_main(symbol):
+    return main_page_currencies
 
 
+@puma.route("/dashboard/currencies", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
+def live_currencies_dashboard(symbol):
+    currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT']
+    currencies.insert(0, symbol)
+    currencies.pop()
 
+    # return redirect(url_for('display_charts',symbol=symbol,interval=interval))
+
+
+from api.utils import *
+
+
+@puma.route('/dashboard/portfolio', methods=['POST', 'GET'],defaults={'symbol': None, 'amount':None} )
+@jwt_required()
+def portfolio(symbol,amount):
+    user_id = get_id(str_to_dict(get_jwt_identity()))
+    user = UserModel.getquery_id((user_id))
+    symbol='AVAXUSDT'
+    amount=15
+
+
+    user.add_portfolio('AVAXUSDT',15)
+    user.add_portfolio('312312312312412534',15)
+    user.to_mongo()
+
+    # print(user.get_portfolio_elements())
+    # user.add_portfolio(symbol, amount)
+
+    print(user)
+    print(type(user.portfolio))
+
+    # user.get_portfolio_elements()
+
+
+    return {'dasdas': 'dasdasdasdsdgdfhfgh'}
+
+    pass
+
+
+@puma.route('/dashboard/scripts')
+def scripts():
+    pass
 
 
 #

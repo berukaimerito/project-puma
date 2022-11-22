@@ -36,26 +36,20 @@ var candleSeries = chart.addCandlestickSeries({
 });
 
 
+// function myFunc(data) {
+//     	console.log(data)
+// 		candleSeries.setData(data)
+// }
 
 
-fetch('http://127.0.0.1:5000/dashboard/chart/')
+
+fetch('http://127.0.0.1:5000/chart')
 	.then((r) => r.json())
 	.then((response) => {
 		console.log(response)
 		candleSeries.setData(response);
 	})
-
-
-
-
-var symboljs = '{{ symbol }}';
-var intervaljs = '{{ interval }}';
-console.log(symboljs)
-
-
-
 var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@kline_1m");
-
 binanceSocket.onmessage = function (event) {
 	var message = JSON.parse(event.data);
 
