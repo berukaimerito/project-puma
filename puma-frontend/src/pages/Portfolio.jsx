@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Chart from '@qognicafinance/react-lightweight-charts'
 import PortfolioHeader from '../components/PortfolioHeader'
+import PortfolioTable from '../components/PortfolioTable'
 
 // mock data portfolio
 const portfolioData = [
@@ -63,11 +64,12 @@ const Portfolio = () => {
         <h1>Portfolio</h1>
         <PortfolioHeader />
         <div>
+          <br/>
           <div
             className="d-flex justify-content-start"
             style={{ marginBottom: '20px', height: '200px' }}
           >
-            The table .....
+          <PortfolioTable />
           </div>
           <h3>Profit historical data</h3>
           <Chart options={options} lineSeries={lineSeries} autoWidth height={400} />
