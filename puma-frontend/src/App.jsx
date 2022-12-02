@@ -25,6 +25,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/script" element={<Script />} />
+          <Route path="/script/:id" element={<Script />} />
         </Routes>
       </main>
     </Router>

@@ -2,7 +2,7 @@
 let users = [
   {
     _id: 1,
-    name: "bora",
+    name: "Sibora",
     email: "bora@example.com",
     password: "123",
   },

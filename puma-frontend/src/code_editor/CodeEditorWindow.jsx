@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Editor from '@monaco-editor/react'
 
@@ -9,6 +9,10 @@ const CodeEditorWindow = ({ onChange, language, code, theme }) => {
     setValue(value)
     onChange('code', value)
   }
+
+  useEffect(() => {
+    setValue(code || '')
+  }, [code])
 
   return (
     <div style={{ borderRadius: '25px', border: '5px' }}>

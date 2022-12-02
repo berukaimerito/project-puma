@@ -3,7 +3,7 @@ let portfolio = {
   _id: 1,
   user: {
     _id: 1,
-    name: "bora",
+    name: "Sibora",
     email: "bora@example.com",
     password: "123",
   },

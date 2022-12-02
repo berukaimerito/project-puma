@@ -14,6 +14,8 @@ import ThemeDropdown from './ThemeDropdown'
 import LanguagesDropdown from './LanguagesDropdown'
 import { Button, Col, Row } from 'react-bootstrap'
 import CurrencyDropDown from './CurrencyDropDown'
+import { useParams } from 'react-router'
+import scriptService from '../services/mock/script.service'
 
 const javascriptDefault = `/**
 * Default code.
@@ -23,9 +25,6 @@ const javascriptDefault = `/**
 const basicFunction = () => {
  return 2+2;
 };
-
-const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const target = 5;
 console.log(basicFunction());
 `
 
@@ -37,6 +36,8 @@ const Landing = () => {
   const [theme, setTheme] = useState('cobalt')
   const [currency, setCurrency] = useState('BTC')
   const [language, setLanguage] = useState(languageOptions[0])
+
+  const params = useParams()
 
   const enterPress = useKeyPress('Enter')
   const ctrlPress = useKeyPress('Control')
@@ -100,10 +101,7 @@ const Landing = () => {
         if (status === 429) {
           console.log('too many requests', status)
 
-          showErrorToast(
-            `Quota of 100 requests exceeded for the Day! Please read the blog on freeCodeCamp to learn how to setup your own RAPID API Judge0!`,
-            10000
-          )
+          showErrorToast(`Quota of 100 requests exceeded`, 10000)
         }
         setProcessing(false)
         console.log('catch block...', error)
@@ -165,6 +163,16 @@ const Landing = () => {
       setTheme({ value: 'oceanic-next', label: 'Oceanic Next' })
     )
   }, [])
+
+  useEffect(() => {
+    if (params.id) {
+      console.log('test11111')
+      const script = scriptService.getScriptById(params.id)
+      console.log(script)
+      setCode(script[0].code)
+    }
+    console.log(code)
+  }, [code])
 
   const showSuccessToast = (msg) => {
     toast.success(msg || `Compiled Successfully!`, {
@@ -235,7 +243,7 @@ const Landing = () => {
           {outputDetails && <OutputDetails outputDetails={outputDetails} />}
           <div style={{ marginTop: '10px' }}>
             <Button size="lg" variant="success">
-              {'Save Script'}
+              {params.id ? 'Save Changes' : 'Save Script'}
             </Button>
           </div>
         </Col>

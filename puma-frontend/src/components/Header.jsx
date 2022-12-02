@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { logout } from '../slices/auth'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGaugeHigh } from '@fortawesome/free-solid-svg-icons'
+import {faCode} from '@fortawesome/free-solid-svg-icons'
+import {faUser} from '@fortawesome/free-solid-svg-icons'
 
 const Header = () => {
   const { user: currentUser } = useSelector((state) => state.auth)
@@ -22,10 +24,6 @@ const Header = () => {
 
   const profileHandler = () => {
     navigate('/profile')
-  }
-
-  const scriptHandler = () => {
-    navigate('/script')
   }
 
   const portfolioHandler = () => {
@@ -52,11 +50,21 @@ const Header = () => {
                   </LinkContainer>
                 )
               }
+
+              {
+                currentUser && (
+                  <LinkContainer to="/script">
+                    <Nav.Link>
+                    <FontAwesomeIcon icon={faCode} /> Script
+                    </Nav.Link>
+                  </LinkContainer>
+                )
+              }
+
               {currentUser ? (
-                <NavDropdown title={currentUser.email} id="username">
+                <NavDropdown icon={faUser} title={currentUser.name} id="username">
                   <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                   <NavDropdown.Item onClick={profileHandler}>Profile</NavDropdown.Item>
-                  <NavDropdown.Item onClick={scriptHandler}>Script</NavDropdown.Item>
                   <NavDropdown.Item onClick={portfolioHandler}>My-Portfolio</NavDropdown.Item>
                 </NavDropdown>
               ) : (
