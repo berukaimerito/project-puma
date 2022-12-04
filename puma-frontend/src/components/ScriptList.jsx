@@ -23,7 +23,7 @@ function ScriptList({ scripts }) {
         <p>No scripts</p>
       ) : (
         <>
-          <h1>Scripts</h1>
+          <h1>My Scripts</h1>
           <Row
             lg={3}
             style={{

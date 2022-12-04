@@ -172,7 +172,7 @@ const Landing = () => {
       setCode(script[0].code)
     }
     console.log(code)
-  }, [code])
+  }, [])
 
   const showSuccessToast = (msg) => {
     toast.success(msg || `Compiled Successfully!`, {
