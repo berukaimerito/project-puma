@@ -6,6 +6,12 @@
     font-weight: bold;
     color:#1a1713;
   }
+
+  .landingPageImage{
+    /* background-image: url('../public/images/homepage.jpg'); */
+    background-size: cover;
+  }
+
   .Jumbotron-landing-footer{
     background-color: #332D2D;
     height: 50px;
