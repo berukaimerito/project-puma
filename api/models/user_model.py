@@ -1,10 +1,12 @@
-from api.db import db
+from db import db
 from mongoengine import Document
 from mongoengine import StringField, EmailField, EmbeddedDocumentField, ListField
-from api.models.portfolio_model import PortfolioModel
+from models.portfolio_model import PortfolioModel
+from models.script_model import ScriptModel
 # from api.models.script_model import ScriptModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from api.utils import *
+from utils import *
+
 
 class UserModel(Document):
     username = StringField(required=False)
@@ -12,14 +14,46 @@ class UserModel(Document):
     cell = StringField()
     password = StringField(required=False)
     portfolio = ListField(EmbeddedDocumentField(PortfolioModel))
-    # scripts = ListField(EmbeddedDocumentField(ScriptModel))
+    scripts = ListField(EmbeddedDocumentField(ScriptModel))
 
-    # def get_portfolio_elements(self):
-    #     p = PortfolioModel(symbol='BTCUSDT',amount=15)
-    #     self.portfolio.append(p)
-    def add_portfolio(self,symbol, amount):
-         self.portfolio.append((PortfolioModel(symbol=symbol, amount=amount)))
+    def add_portfolio(self, symbol):
+        self.portfolio.append((PortfolioModel(symbol=symbol)))
 
+    def add_script(self, symbol, pyscript, interval):
+        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, interval=interval)))
+
+    def delete_script(self, symbol):
+
+        for script in self.scripts:
+            if str(script["symbol"]) == symbol:
+                print(str(script["symbol"]), symbol)
+                self.scripts.remove(script)
+        self.save()
+
+    def find_pyscript_by_symbol(self, symbol):
+        for script in self.scripts:
+            if str(script.symbol) == str(symbol):
+                return script.pyscript
+
+    def edit_script(self, symbol,pyscript):
+
+        for script in self.scripts:
+            if str(script.symbol) == str(symbol):
+                script.pyscript = pyscript
+                print( script.pyscript )
+                print( pyscript )
+                print(script.pyscript==pyscript)
+
+                return True
+
+
+    @staticmethod
+    def check_symbol(id, symbol):
+        user = UserModel.objects(id=id).first()
+        for i in user.scripts:
+            if str(i.symbol) == str(symbol):
+                return False
+        return True
 
     @staticmethod
     def hash_password(password):

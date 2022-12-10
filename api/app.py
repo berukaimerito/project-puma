@@ -11,7 +11,7 @@ from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user_model import UserModel
 from flask_jwt_extended import jwt_required
-from api.db import db
+from db import db
 
 env_path = Path("..") / ".pumavenv"
 
@@ -34,7 +34,7 @@ def token_required(function):
 
 from resources.user_resource import User, UserRegister, DeleteUser
 from resources.homepage import Home
-from api.config import API_SECRET, API_KEY
+from config import API_SECRET, API_KEY
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
@@ -88,7 +88,7 @@ jwt = JWTManager(puma)
 # def show(user_id, username):
 #     pass
 #
-from api.get_data import get_historical_kline
+from get_data import get_historical_kline
 
 
 @puma.route("/chart", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
@@ -117,39 +117,129 @@ def live_currencies_dashboard(symbol):
     # return redirect(url_for('display_charts',symbol=symbol,interval=interval))
 
 
-from api.utils import *
+from utils import *
 
 
-@puma.route('/dashboard/portfolio', methods=['POST', 'GET'],defaults={'symbol': None, 'amount':None} )
+@puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
 @jwt_required()
-def portfolio(symbol,amount):
+def portfolio():
     user_id = get_id(str_to_dict(get_jwt_identity()))
-    user = UserModel.getquery_id((user_id))
-    symbol='AVAXUSDT'
-    amount=15
+    user = UserModel.getquery_id(user_id)
+
+    for script in user.scripts:
+        user.add_portfolio(script.symbol)
+
+    return jsonify(user.portfolio)
 
 
-    user.add_portfolio('AVAXUSDT',15)
-    user.add_portfolio('312312312312412534',15)
-    user.to_mongo()
-
-    # print(user.get_portfolio_elements())
-    # user.add_portfolio(symbol, amount)
-
-    print(user)
-    print(type(user.portfolio))
-
-    # user.get_portfolio_elements()
+from furl import furl
 
 
-    return {'dasdas': 'dasdasdasdsdgdfhfgh'}
+@puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@jwt_required()
+def dash():
+    data = request.json
+    user_id = get_id(str_to_dict(get_jwt_identity()))
+    user = UserModel.getquery_id(user_id)
+    if user.scripts:
+        response = [{'symbol': i.symbol, 'interval': i.interval} for i in user.scripts]
+        if request.method == 'DELETE':
+            symbol = data['symbol']
+            user.delete_script(symbol)
+            return jsonify(response)
 
-    pass
+        return jsonify(response)
+
+    else:
+        return jsonify('No scripts yet')
 
 
-@puma.route('/dashboard/scripts')
+# @puma.route('/dashboard', methods=['POST', 'GET', 'PUT'])
+# @jwt_required()
+# def dash():
+#     data = request.json
+#     user_id = get_id(str_to_dict(get_jwt_identity()))
+#     user = UserModel.getquery_id(user_id)
+#
+#     if request.method == 'GET':
+#         if user.scripts:
+#             response = [{'symbol': i.symbol, 'interval': i.interval} for i in user.scripts]
+#             json_string = json.dumps(response)
+#             return json_string
+#         else:
+#             return jsonify('No scripts yet')
+#
+# if request.method == 'DELETE':
+#     f = furl("/abc?def='ghi'")
+#     print(f.args[symbol])
+
+
+import json
+import asyncio
+
+
+@puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
+@jwt_required()
 def scripts():
-    pass
+    # users get queue data
+    data = request.json
+    symbol = data['symbol']
+    script = data['script']
+    interval = data['interval']
+    user_id = get_id(str_to_dict(get_jwt_identity()))
+    user = UserModel.getquery_id(user_id)
+    data = {'userName': user.username,
+            'symbol': symbol,
+            }
+
+    if request.method == 'POST':
+        # if request.method == 'POST' and user.check_symbol(user_id, symbol):
+        user.add_script(symbol, script, interval)
+        user.save()
+        json_object = json.dumps(data)
+        loaded_r = json.loads(json_object)
+        print(loaded_r)
+        requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r, verify=False)
+
+        #################################################################################
+        return {'symbol': symbol, 'interval': interval, 'script': script}
+
+    # return {'name': 'user.username'}
+
+
+@puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
+@jwt_required()
+def execute_script(symbol):
+    user_id = get_id(str_to_dict(get_jwt_identity()))
+    user = UserModel.getquery_id(user_id)
+    data = request.json
+    new_script = data['script']
+    if request.method == 'GET':
+        for i in user.scripts:
+            if str(i.symbol) == str(symbol):
+                return str(i.pyscript)
+
+    if request.method == 'POST':
+        user_script = user.find_pyscript_by_symbol(symbol)
+        user.edit_script(symbol, new_script)
+        user.save()
+        if user.edit_script:
+            json_object = json.dumps({
+                'userName': user.username,
+                'symbol': symbol
+
+            })
+            loaded_r = json.loads(json_object)
+            requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r)
+            return {'symbol': symbol, 'script': new_script}
+
+
+# @puma.route('/dashboard/scripts/<scripts_id>')
+# def scripts():
+#     pass
+# @puma.route('/dashboard/scripts')
+# def scripts():
+#     pass
 
 
 #

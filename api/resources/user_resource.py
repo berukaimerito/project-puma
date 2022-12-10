@@ -1,7 +1,7 @@
 from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
 from flask import jsonify, json
-from api.models.user_model import *
-from api.common.encoder import MongoEncoder
+from models.user_model import *
+from common.encoder import MongoEncoder
 from flask_restful import Resource, reqparse
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -71,7 +71,7 @@ class UserRegister(Resource):
         return {'message': 'user has been created successfully.'}, 201
 
 
-from api.utils import *
+from utils import *
 
 
 class DeleteUser(Resource):

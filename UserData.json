@@ -1,0 +1,80 @@
+{
+    "users": [
+        {
+            "user_name": "veysi",
+            "symbol": "BTCUSDT"
+        },
+        {
+            "user_name": "yunus",
+            "symbol": "BTCUSDT"
+        },
+        {
+            "user_name": "bet\u00fcl",
+            "symbol": "BTCUSDT"
+        },
+        {
+            "user_name": "yenig",
+            "symbol": "annesi"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "DOTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "ATOMUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "GRTUSDT"
+        },
+        {
+            "user_name": "DABU",
+            "symbol": "SOLUSDT"
+        }
+    ]
+}

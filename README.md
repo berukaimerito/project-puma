@@ -1,2 +1,2 @@
-# project-puma
-FinTech application where user can write their own financial strategieS
+# BinaceToRabbit
+An application developed for getting binance live data, save it to MongoDB and feed RabbitMQ queues.
