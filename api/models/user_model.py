@@ -35,14 +35,14 @@ class UserModel(Document):
             if str(script.symbol) == str(symbol):
                 return script.pyscript
 
-    def edit_script(self, symbol,pyscript):
+    def edit_script(self, symbol, pyscript):
 
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
                 script.pyscript = pyscript
-                print( script.pyscript )
-                print( pyscript )
-                print(script.pyscript==pyscript)
+                print(script.pyscript)
+                print(pyscript)
+                print(script.pyscript == pyscript)
 
                 return True
 
