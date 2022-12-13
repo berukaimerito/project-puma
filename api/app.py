@@ -280,25 +280,25 @@ def change_password(user):
 #
 
 
-# @puma.route('/register', methods=['GET', 'POST'])
-# def register():
-#     data = request.json
-#     if UserModel.objects.filter(name=data['name']):
-#         return make_response('User already exists')
-#     else:
-#         hashed_password = generate_password_hash(data['password'], method='sha256')
-#         new_user = UserModel(name=data['name'],password=hashed_password)
-#         new_user.save()
-#         return jsonify({'message' : 'New user created'})
-#
+@puma.route('/register', methods=['GET', 'POST'])
+def register():
+    data = request.json
+    if UserModel.objects.filter(name=data['name']):
+        return make_response('User already exists')
+    else:
+        hashed_password = generate_password_hash(data['password'], method='sha256')
+        new_user = UserModel(name=data['name'],password=hashed_password)
+        new_user.save()
+        return jsonify({'message' : 'New user created'})
+
 
 #
-# @puma.route('/login')
-# def login():
-#     data = request.json
-#     user = UserModel.objects.filter(name=data['name']).first()
-#     if check_password_hash(user.password, data['password']):
-#          token = jwt.encode(
-#              {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
-#              puma.config['SECRET_KEY'], "HS256")
-#          return jsonify({'token': token})
+@puma.route('/login')
+def login():
+    data = request.json
+    user = UserModel.objects.filter(name=data['name']).first()
+    if check_password_hash(user.password, data['password']):
+         token = jwt.encode(
+             {'id':  json.dumps(str(user.id), default=str)[1:-1], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=45)},
+             puma.config['SECRET_KEY'], "HS256")
+         return jsonify({'token': token})
