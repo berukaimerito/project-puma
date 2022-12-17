@@ -1,22 +1,28 @@
-import datetime
 import json
-from functools import wraps
-from pathlib import Path
-
 import requests
-from flask import Flask, request, jsonify, make_response, redirect, url_for, render_template
+from functools import wraps
+from utils import *
+from db import db
+from config import API_SECRET, API_KEY
+from get_data import get_historical_kline
+from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
+from utils import *
+from flask import Flask, request, jsonify, make_response, Response
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
+from flask_mail import Mail
+from flask_api import status
 from flask_wtf.csrf import CSRFProtect
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import HTTPException
 from models.user_model import UserModel
 from flask_jwt_extended import jwt_required
-from db import db
+from resources.user_resource import User, UserRegister, DeleteUser
+from resources.homepage import Home
+from flask_mail import Mail
 
-env_path = Path("..") / ".pumavenv"
 
+#env_path = Path("..") / ".pumavenv"
 
-#
 def token_required(function):
     @wraps(function)
     def decorated(*args, **kwargs):
@@ -32,21 +38,16 @@ def token_required(function):
     return decorated
 
 
-from resources.user_resource import User, UserRegister, DeleteUser
-from resources.homepage import Home
-from config import API_SECRET, API_KEY
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
-api = Api(puma)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+api = Api(puma)
 api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/login")
 api.add_resource(Home, "/homepage")
 api.add_resource(DeleteUser, "/delete")
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 puma.config["MONGODB_SETTINGS"] = [
     {
@@ -60,7 +61,16 @@ puma.config["MONGODB_SETTINGS"] = [
 puma.config['WTF_CSRF_ENABLED'] = False
 puma.config["SECRET_KEY"] = "secretsecret"
 puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
+puma.config['MAIL_SERVER']='smtp.gmail.com'
+puma.config['MAIL_PORT'] = 465
+puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
+puma.config['MAIL_PASSWORD'] = 'your_password'
+puma.config['MAIL_USE_TLS'] = False
+puma.config['JSON_SORT_KEYS'] = False
 
+
+
+mail = Mail(puma)
 csrf = CSRFProtect()
 csrf.init_app(puma)
 db.init_app(puma)
@@ -78,7 +88,7 @@ jwt = JWTManager(puma)
 #
 
 # def handle_socket_message(msg):
-#     print(f"message type: {msg['e']}")
+#     print(f"message type: {msg['e']}")§
 #     print(msg)
 #
 
@@ -88,16 +98,42 @@ jwt = JWTManager(puma)
 # def show(user_id, username):
 #     pass
 #
-from get_data import get_historical_kline
 
 
-@puma.route("/chart", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
-@puma.route("/chart/<symbol>/<interval>")
-def default_chart(symbol, interval):
+
+@puma.route("/home")
+@puma.route("/")
+def welcome():
+        
+        r = {'is_claimed': 'True', 'rating': 3.5}
+        r = json.dumps(r)
+        loaded_r = json.loads(r)
+
+        response = {
+        "Status": status.HTTP_200_OK,
+        "Message": "Welcome HOME",
+        "Data": loaded_r
+
+         }
+        
+ 
+        return response
+
+
+# @puma.route('/login', methods = ['POST']) 
+
+
+@puma.route('/<username>/password', methods = ['GET', 'PUT'])
+@jwt_required()
+def change_password():
+    pass
+
+@puma.route("/historical_klines", methods=['POST', 'GET'])
+def default_chart():
+    data = request.json
+    symbol = data['symbol']
+    interval = data['interval']
     return get_historical_kline(symbol, interval)
-    # list of dictionries
-    # [{'time': 1661702400.0, 'open': '20007.60', 'high': '20140.00', 'low': '19942.00', 'close': '19962.50'},
-    #  {'time': 1661716800.0, 'open': '19962.60', 'high': '20035.00', 'low': '19508.00', 'close': '19547.50'}
 
 
 main_page_currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT', 'DOGEUSDT', 'MATICUSDT']
@@ -110,6 +146,7 @@ def live_currencies_main(symbol):
 
 @puma.route("/dashboard/currencies", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
 def live_currencies_dashboard(symbol):
+
     currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT']
     currencies.insert(0, symbol)
     currencies.pop()
@@ -117,27 +154,31 @@ def live_currencies_dashboard(symbol):
     # return redirect(url_for('display_charts',symbol=symbol,interval=interval))
 
 
-from utils import *
 
 
 @puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
 @jwt_required()
 def portfolio():
+
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
 
     for script in user.scripts:
+        print(script)
         user.add_portfolio(script.symbol)
+    
+    response = {
 
+    }
     return jsonify(user.portfolio)
 
 
-from furl import furl
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
 @jwt_required()
 def dash():
+    response = {''}
     data = request.json
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
@@ -147,11 +188,10 @@ def dash():
             symbol = data['symbol']
             user.delete_script(symbol)
             return jsonify(response)
-
         return jsonify(response)
 
     else:
-        return jsonify('No scripts yet')
+        return jsonify(response)
 
 
 # @puma.route('/dashboard', methods=['POST', 'GET', 'PUT'])
@@ -174,14 +214,12 @@ def dash():
 #     print(f.args[symbol])
 
 
-import json
-import asyncio
-
 
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 def scripts():
     # users get queue data
+
     data = request.json
     symbol = data['symbol']
     script = data['script']
@@ -198,11 +236,16 @@ def scripts():
         user.save()
         json_object = json.dumps(data)
         loaded_r = json.loads(json_object)
-        print(loaded_r)
+        print(loaded_r['symbol'])
+        print(loaded_r['userName'])
         requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r, verify=False)
+        #requests.post("http://127.0.0.1:8086/start_live_transfer")
+   
+
 
         #################################################################################
-        return {'symbol': symbol, 'interval': interval, 'script': script}
+        r ={'symbol': symbol, 'script': script}
+        return make_response(jsonify(r))
 
     # return {'name': 'user.username'}
 
@@ -210,28 +253,36 @@ def scripts():
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 def execute_script(symbol):
+
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
+    
     data = request.json
-    new_script = data['script']
+
     if request.method == 'GET':
         for i in user.scripts:
             if str(i.symbol) == str(symbol):
-                return str(i.pyscript)
-
+                r = {"currency": str(i.symbol),"code": str(i.pyscript)}
+                return make_response(jsonify(r))
+               
     if request.method == 'POST':
+        new_script = data['script']
         user_script = user.find_pyscript_by_symbol(symbol)
         user.edit_script(symbol, new_script)
+        py_script = user.find_pyscript_by_symbol(symbol)
         user.save()
+
         if user.edit_script:
             json_object = json.dumps({
                 'userName': user.username,
-                'symbol': symbol
+                'symbol': symbol,
+                'script': py_script
 
             })
+
             loaded_r = json.loads(json_object)
             requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r)
-            return {'symbol': symbol, 'script': new_script}
+            return make_response(loaded_r)
 
 
 # @puma.route('/dashboard/scripts/<scripts_id>')
@@ -248,36 +299,11 @@ def execute_script(symbol):
 # @jwt_required()
 # def index():
 #     return '<h1>Welcome homepage</h1>'
-#
-#
-# @puma.route("/dashboard/script", methods=['POST', 'GET'])
-# @jwt_required()
-# def index():
-#     return '<h1>Welcome homepage</h1>'
-#
-#
-# @puma.route("/dashboard/script/<script_id>", methods=['POST', 'GET'])
-# @jwt_required()
-# def index():
-#     return '<h1>Welcome homepage</h1>'
+
 
 
 puma.run(host="127.0.0.1", port=5000, debug=True)
 
-
-@puma.route('/settings/password')
-@token_required
-def change_password(user):
-    data = request.json
-    pswrd = data['password']
-    if user:
-        user.update(password=generate_password_hash(pswrd, method='sha256'))
-        return jsonify('Password change in silly level')
-    else:
-        return jsonify('Not success')
-
-#
-#
 
 
 # @puma.route('/register', methods=['GET', 'POST'])

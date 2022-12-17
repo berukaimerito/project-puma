@@ -1,5 +1,8 @@
 from runtime import user_script
 
+
+#func ()
+
 user_bot = user_script.UserBot()
 user_bot_1 =user_script.UserBot()
 scripts = [

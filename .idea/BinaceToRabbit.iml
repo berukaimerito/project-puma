@@ -5,8 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/DataAcquisitionService" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/RuntimeService" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Api" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.9" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

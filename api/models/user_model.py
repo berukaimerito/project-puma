@@ -10,12 +10,13 @@ from utils import *
 
 class UserModel(Document):
     username = StringField(required=False)
-    mail = EmailField(required=False)
-    cell = StringField()
+    email = EmailField(required=False)
+    surname = StringField()
     password = StringField(required=False)
     portfolio = ListField(EmbeddedDocumentField(PortfolioModel))
     scripts = ListField(EmbeddedDocumentField(ScriptModel))
-
+    
+    
     def add_portfolio(self, symbol):
         self.portfolio.append((PortfolioModel(symbol=symbol)))
 
@@ -64,16 +65,16 @@ class UserModel(Document):
         return True if UserModel.objects.filter(username=name).first() else False
 
     @staticmethod
-    def check_mail(mail):
-        return False if UserModel.objects.filter(mail=mail).first() else True
+    def check_mail(email):
+        return False if UserModel.objects.filter(email=email).first() else True
 
     @staticmethod
-    def getquery_name(name):
-        return UserModel.objects.filter(username=name).first()
+    def getquery_name(username):
+        return UserModel.objects.filter(username=username).first()
 
     @staticmethod
-    def getquery_mail(mail):
-        return UserModel.objects.filter(mail=mail).first()
+    def getquery_mail(email):
+        return UserModel.objects.filter(mail=email).first()
 
     @staticmethod
     def getquery_id(id):

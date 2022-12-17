@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 env_path = Path("..") / ".env"
 load_dotenv(dotenv_path=env_path)
 
-MONGO_URI_SH= 'mongodb://localhost/test'
+MONGO_URI_SH= 'mongodb://localhost/BinanceToRabbit'
 SECRET_KEY= 'ourvery7612secretkey'
 CELERY_BROKER_URL= 'amqp://guest:guest@localhost:5672'
 API_KEY = 'YooZh5uicqICkpX4FnYYX5Aouw2J6Yp6QQkmqt5qJCPp40FNvAt8rJYvRdN9PmyB'

@@ -1,8 +1,6 @@
-from binance import Client
 import asyncio
 
 symbols = ['AVAXUSDT','BTCUSDT','ETHUSDT']
-
 
 _base = 'wss://stream.binance.com:9443 /ws/@miniTicker'
 
@@ -12,4 +10,3 @@ _base = 'wss://stream.binance.com:9443 /ws/@miniTicker'
 #     requests.get(_base)
 #
 #     pass
-#

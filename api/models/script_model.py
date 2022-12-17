@@ -6,7 +6,7 @@ from mongoengine import EmbeddedDocument
 
 
 class ScriptModel(EmbeddedDocument):
-
+    
     in_use = BooleanField()
     path = StringField()
     symbol = StringField()

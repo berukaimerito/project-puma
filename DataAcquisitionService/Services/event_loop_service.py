@@ -102,7 +102,7 @@ def save_candle_stick_and_ticker(app, candleSticks, symbol, interval, is_queue=F
         tickerModel.timestamp = str(datetime.datetime.utcnow())
         tickerModel.interval = interval
         tickerModel.symbol = symbol
-        ticker_id = 0
+        ticker_id = 0xe
 
         if not is_queue:
             # print("Saving...")
@@ -126,6 +126,7 @@ def save_candle_stick_and_ticker(app, candleSticks, symbol, interval, is_queue=F
 
         if not is_queue:
             candle_stick_id = SaveCandleStick(app, candleStickModel.to_mongo())
+      
 
     result = {
         "CandleStick": candleStickModel.to_json(),
