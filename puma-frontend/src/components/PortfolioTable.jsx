@@ -20,7 +20,6 @@ function PortfolioTable({ currencies }) {
           <th>Currency</th>
           <th>Price</th>
           <th>24hr</th>
-          <th>Holdings</th>
           <th>Avg.Buy Price</th>
           <th>Profit/Loss</th>
         </tr>
@@ -41,7 +40,6 @@ function PortfolioTable({ currencies }) {
                 <th>{curr.name}</th>
                 <th>{curr.price}</th>
                 <th>{curr.change24h}%</th>
-                <th>${curr.holdings}</th>
                 <th>${curr.avgBuyPrice}</th>
                 <th>{curr.profitOrLoss}%</th>
                 <th style={{ height: '50px', width: '300px' }}>

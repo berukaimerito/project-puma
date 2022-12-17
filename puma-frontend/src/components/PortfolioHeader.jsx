@@ -23,7 +23,7 @@ function PortfolioHeader({ portfolio }) {
           <Card.Body>
             <Card.Title>-$ {portfolio.totalProfitLoss}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
-              Total profit loss <p style={{ color: 'red' }}>(-0.25%)</p>
+              Total profit/loss <p style={{ color: 'red' }}>(-0.25%)</p>
             </Card.Subtitle>
           </Card.Body>
         </Card>
