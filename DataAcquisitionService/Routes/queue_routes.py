@@ -30,6 +30,7 @@ def create_queue(request: Request, queue: Queue = Body(...)):
         })
     loaded_r = json.loads(json_object)
     requests.post('http://127.0.0.1:8086/start_live_transfer',json=loaded_r)
+    print("Request sent to RunTime")
 
 
 

@@ -3,7 +3,6 @@ from fastapi.encoders import jsonable_encoder
 from typing import List
 from Models.QueueModel import Queue
 from Services.queue_service import UserQueue
-from auth import *
 router = APIRouter()
 #
 #
