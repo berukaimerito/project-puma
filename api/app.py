@@ -61,12 +61,13 @@ puma.config["MONGODB_SETTINGS"] = [
 puma.config['WTF_CSRF_ENABLED'] = False
 puma.config["SECRET_KEY"] = "secretsecret"
 puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
+puma.config['JSON_SORT_KEYS'] = False
+
 puma.config['MAIL_SERVER']='smtp.gmail.com'
 puma.config['MAIL_PORT'] = 465
 puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
 puma.config['MAIL_PASSWORD'] = 'your_password'
 puma.config['MAIL_USE_TLS'] = False
-puma.config['JSON_SORT_KEYS'] = False
 
 
 
@@ -118,9 +119,6 @@ def welcome():
         
  
         return response
-
-
-# @puma.route('/login', methods = ['POST']) 
 
 
 @puma.route('/<username>/password', methods = ['GET', 'PUT'])
