@@ -16,7 +16,7 @@ def get_historical_kline(symbol, interval):
         processed_candlestick = []
         for data in response:
             candlestick = {
-                'time': data[0] / 1000,
+                'time': data[0] ,
                 'open': data[1],
                 'high': data[2],
                 'low': data[3],

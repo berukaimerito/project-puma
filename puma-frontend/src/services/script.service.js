@@ -16,16 +16,45 @@ const saveScript = async (username, script, symbol, interval) => {
     });
 };
 
-const getScriptById = (symbol) => {
-  return axios.get(API_URL + "scripts/" + symbol, { headers: authHeader() });
+const getScriptById = async (symbol) => {
+  return axios
+    .get(API_URL + "scripts/" + symbol, { headers: authHeader() })
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    });
 };
 
-const deleteById = (symbol) => {
-  return axios.delete(API_URL + "scripts/" + symbol);
+const deleteById = async (symbol) => {
+  return axios.delete(API_URL + "scripts/" + symbol).then((response) => {
+    console.log(response.data);
+    return response.data;
+  });
 };
 
-const getAllScripts = (id) => {
-  return axios.get(API_URL + "scripts", { headers: authHeader() });
+const runScript = async (symbol) => {
+  return axios.post(API_URL + "scripts/" + symbol + "/run").then((response) => {
+    console.log(response.data);
+    return response.data;
+  });
+};
+
+const stopScript = async (symbol) => {
+  return axios
+    .post(API_URL + "scripts/" + symbol + "/stop")
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    });
+};
+
+const getAllScripts = async () => {
+  return axios
+    .get(API_URL + "scripts", { headers: authHeader() })
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    });
 };
 
 const scriptService = {
@@ -33,6 +62,8 @@ const scriptService = {
   saveScript,
   getAllScripts,
   deleteById,
+  runScript,
+  stopScript,
 };
 
 export default scriptService;

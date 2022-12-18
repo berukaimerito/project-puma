@@ -106,7 +106,7 @@ jwt = JWTManager(puma)
 #
 
 
-
+CORS(puma)
 @puma.route("/home")
 @puma.route("/")
 def welcome():
