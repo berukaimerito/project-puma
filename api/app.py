@@ -72,7 +72,7 @@ puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
 puma.config['MAIL_PASSWORD'] = 'your_password'
 puma.config['MAIL_USE_TLS'] = False
 
-puma.config['CORS_HEADERS'] = 'Content-Type'
+
 
 
 
