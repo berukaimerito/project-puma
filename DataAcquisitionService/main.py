@@ -6,15 +6,13 @@ from fastapi import FastAPI, Request
 from dotenv import dotenv_values
 from pymongo import MongoClient
 from Routes.queue_routes import router as queue_router
-from Routes.user_route import router as user_router
 import asyncio
 import threading
 
 config = dotenv_values()
 
 app = FastAPI()
-app.include_router(queue_router, tags=["Queue Operations"], prefix="/queues")
-app.include_router(user_router, tags=["User"], prefix="/queues")
+app.include_router(queue_router, tags=["Queue Operations"])
 
 
 @app.on_event("startup")

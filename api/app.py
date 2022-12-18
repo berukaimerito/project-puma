@@ -228,14 +228,14 @@ def dash():
 def scripts():
     # users get queue data
     data = request.json
-    symbol,script,interval = data['symbol'],data['script'],data['interval']
+    symbol,script = data['symbol'],data['code']
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     data = {'userName': user.username,
             'symbol': symbol,
             }
     if request.method == 'POST' and user.check_symbol(user_id, symbol):
-        user.add_script(symbol, script, interval)
+        user.add_script(symbol, script)
         user.save()
         #
         # json_object = json.dumps(data)
@@ -247,10 +247,9 @@ def scripts():
 
 
 
-        r ={'symbol': symbol, 'script': script}
-        return make_response(jsonify(r))
+    r ={'symbol': symbol, 'code': script}
+    return make_response(jsonify(r))
 
-    # return {'name': 'user.username'}
 
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
@@ -269,7 +268,7 @@ def execute_script(symbol):
                 return make_response(jsonify(r))
                
     if request.method == 'POST':
-        new_script = data['script']
+        new_script = data['code']
         user_script = user.find_pyscript_by_symbol(symbol)
         user.edit_script(symbol, new_script)
         py_script = user.find_pyscript_by_symbol(symbol)
@@ -284,7 +283,7 @@ def execute_script(symbol):
             })
 
             loaded_r = json.loads(json_object)
-            requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r)
+            requests.post("http://127.0.0.1:8000/create_queue", json=loaded_r)
             return make_response(loaded_r)
 
 

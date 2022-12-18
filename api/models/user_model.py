@@ -20,8 +20,8 @@ class UserModel(Document):
     def add_portfolio(self, symbol):
         self.portfolio.append((PortfolioModel(symbol=symbol)))
 
-    def add_script(self, symbol, pyscript, interval):
-        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, interval=interval)))
+    def add_script(self, symbol, pyscript):
+        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript)))
 
     def delete_script(self, symbol):
 
