@@ -2,14 +2,20 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/"; // backend api
 
-const register = (name, surname, email, password, confirmPassword) => {
+const register = async (name, surname, email, password, confirmPassword) => {
   console.log(name, surname, email, password, confirmPassword);
-  return axios.post(API_URL + "register", {
-    username: name,
-    surname,
-    email,
-    password,
-  });
+  return axios
+    .post(API_URL + "register", {
+      username: name,
+      surname,
+      email,
+      password,
+      "confirm password": confirmPassword,
+    })
+    .then((response) => {
+      console.log(response);
+      return response.data;
+    });
 };
 
 const login = async (username, password) => {
