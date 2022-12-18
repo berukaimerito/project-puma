@@ -11,7 +11,7 @@ from flask import Flask, request, jsonify, make_response, Response
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
 from flask_mail import Mail
-from flask_api import status
+# from flask_api import status
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.exceptions import HTTPException
 from models.user_model import UserModel
@@ -116,12 +116,17 @@ def welcome():
         loaded_r = json.loads(r)
 
         response = {
-        "Status": status.HTTP_200_OK,
         "Message": "Welcome HOME",
         "Data": loaded_r
 
          }
-        
+        #  response = {
+        # "Status": status.HTTP_200_OK,
+        # "Message": "Welcome HOME",
+        # "Data": loaded_r
+        #
+        #  }
+        #
  
         return response
 
@@ -222,27 +227,22 @@ def dash():
 @jwt_required()
 def scripts():
     # users get queue data
-
     data = request.json
-    symbol = data['symbol']
-    script = data['script']
-    interval = data['interval']
+    symbol,script,interval = data['symbol'],data['script'],data['interval']
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     data = {'userName': user.username,
             'symbol': symbol,
             }
-
-    if request.method == 'POST':
-        # if request.method == 'POST' and user.check_symbol(user_id, symbol):
+    if request.method == 'POST' and user.check_symbol(user_id, symbol):
         user.add_script(symbol, script, interval)
         user.save()
-        json_object = json.dumps(data)
-        loaded_r = json.loads(json_object)
-        print(loaded_r['symbol'])
-        print(loaded_r['userName'])
-        requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r, verify=False)
-        requests.post("http://127.0.0.1:8086/start_live_transfer")
+        #
+        # json_object = json.dumps(data)
+        # loaded_r = json.loads(json_object)
+
+        requests.post("http://127.0.0.1:8000/queues/create_queue", json=data, verify=False)
+        # requests.post("http://127.0.0.1:8086/start_live_transfer")
    
 
 
