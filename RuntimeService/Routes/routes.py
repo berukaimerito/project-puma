@@ -1,15 +1,9 @@
-from fastapi import APIRouter, Body, Request, Response, HTTPException, status
+from fastapi import APIRouter, Body, Request
 from fastapi.encoders import jsonable_encoder
-from typing import List
-from Utils import json_util
-import threading
-import asyncio
-
-
 from Models.UserModel import User
 from pika_client import Rabbit
 from bot.abs_bot import Bot
-from Services.consumer import Consumer
+from consume import supervisor
 
 router = APIRouter()
 
@@ -20,17 +14,4 @@ def start_live_data(request: Request, user: User = Body(...)):
         result = user_json
         pika_client = Rabbit()
         bot = Bot(pika_client, user.username, user.symbol)
-
-        thread = threading.Thread(target=lambda: asyncio.run(Consumer.create_consumers()))
-        thread.setName(user["username"] + "_" + "consumer_thread")
-        thread.setDaemon(True)
-        thread.start()  
-       
-
-
-        response = {
-            "Status": status.HTTP_200_OK,
-            "Message": f'{result} +has started to consume intervals',
-            "Data": []
-        }
-        return response
+        supervisor(bot)

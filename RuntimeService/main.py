@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from dotenv import dotenv_values
 from Routes.routes import router
+import threading
+import asyncio
 
 config = dotenv_values()
 
@@ -15,4 +17,6 @@ async def shutdown_event():
     print("Application Closing...")
     pass
 
+
+    
 app.include_router(router, tags=["Live Data Consume"], prefix="/start_live_transfer")

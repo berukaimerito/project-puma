@@ -84,7 +84,7 @@ class UserRegister(Resource):
 class DeleteUser(Resource):
 
     @jwt_required()
-    def get(self):
+    def delete(self):
         user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
         UserModel.objects(id=user_id).delete()
         pass
