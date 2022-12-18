@@ -407,6 +407,22 @@
         {
             "user_name": "puma",
             "symbol": "AVAXUSDT"
+        },
+        {
+            "user_name": "puma",
+            "symbol": "DOGEUSDT"
+        },
+        {
+            "user_name": "maldonado2",
+            "symbol": "AVAXUSDT"
+        },
+        {
+            "user_name": "maldonado2",
+            "symbol": "AVAXUSDT"
+        },
+        {
+            "user_name": "maldonado2",
+            "symbol": "BTCUSDT"
         }
     ]
 }

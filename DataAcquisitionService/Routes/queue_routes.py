@@ -15,6 +15,7 @@ import json
 @router.post("/create_queue", response_description="Create a new Queue",
              status_code=status.HTTP_201_CREATED)  # response_model = Queue
 def create_queue(request: Request, queue: Queue = Body(...)):
+    
     user_queue = UserQueue(queue.userName, queue.symbol)
     user_list.append(user_queue)
     time.sleep(5)
@@ -22,12 +23,11 @@ def create_queue(request: Request, queue: Queue = Body(...)):
     result = user_queue.start_feeding(user_queue)
 
 
-
-
     json_object = json.dumps(   {
             'userName': queue.userName,
             'symbol':queue.symbol
         })
+        
     loaded_r = json.loads(json_object)
     requests.post('http://127.0.0.1:8086/start_live_transfer',json=loaded_r)
     print("Request sent to RunTime")
