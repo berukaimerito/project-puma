@@ -14,7 +14,7 @@ let users = [
   },
 ];
 
-const API_URI = "localhost:5000/users"; // backend api
+const API_URI = "localhost:5000/"; // backend api
 
 const register = (username, email, password) => {};
 

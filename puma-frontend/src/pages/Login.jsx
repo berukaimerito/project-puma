@@ -18,15 +18,15 @@ const Login = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/dashboard')
+    if (isLoggedIn && currentUser) {
+      // navigate('/dashboard')
+      // reload()
     }
-  }, [isLoggedIn, navigate])
+  }, [isLoggedIn,navigate])
 
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(login({ email, password }))
-    reload()
   }
 
   return (

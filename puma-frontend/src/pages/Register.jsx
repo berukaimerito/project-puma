@@ -4,6 +4,7 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import Message from '../components/Message'
+import { register } from '../slices/auth'
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -30,7 +31,7 @@ const Register = () => {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
-      //   dispatch(register(name, email, password))
+        dispatch(register({name,surname, email, password, confirmPassword}))
     }
   }
 
