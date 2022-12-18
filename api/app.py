@@ -19,6 +19,9 @@ from flask_jwt_extended import jwt_required
 from resources.user_resource import User, UserRegister, DeleteUser
 from resources.homepage import Home
 from flask_mail import Mail
+from flask import Flask
+from flask import Flask
+from flask_cors import CORS
 
 
 #env_path = Path("..") / ".pumavenv"
@@ -40,7 +43,7 @@ def token_required(function):
 
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
-
+CORS(puma)
 
 api = Api(puma)
 api.add_resource(UserRegister, "/register")
