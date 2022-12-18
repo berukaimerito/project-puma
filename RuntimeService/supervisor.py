@@ -1,9 +1,13 @@
+from dotenv import dotenv_values
+
+
+config = dotenv_values()
 
 from bot import Bot
-from dotenv import dotenv_values
-config = dotenv_values()
-class Singleton(type):
 
+
+class Singleton(type):
+    """ Metaclass that creates a Singleton base type when called. """
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
@@ -13,54 +17,29 @@ class Singleton(type):
         return cls._instances[cls]
 
 
+# class Supervisor:
+# class Supervisor:
 class Supervisor(metaclass=Singleton):
+    supervisor_bot_list=[]
 
-    def __init__(self):
-        pass
-    #
-    # def consume_interval_1(ch, method, properties, body):
-    #     print(" [x] Received %r" % body.decode())
-    #     # time.sleep(body.count(b'.'))
-    #     print(" [x] Done")
-    #     ch.basic_ack(delivery_tag=method.delivery_tag)
-    #
-    # def consume_interval_2(ch, method, properties, body):
-    #     print(" [x] Received %r" % body.decode())
-    #     # time.sleep(body.count(b'.'))
-    #     print(" [x] Done")
-    #     ch.basic_ack(delivery_tag=method.delivery_tag)
-    #
-    # def consume_interval_3(ch, method, properties, body):
-    #     print(" [x] Received %r" % body.decode())
-    #     # time.sleep(body.count(b'.'))
-    #     print(" [x] Done")
-    #     ch.basic_ack(delivery_tag=method.delivery_tag)
-    #
-    # def consume_interval_4(ch, method, properties, body):
-    #     print(" [x] Received %r" % body.decode())
-    #     # time.sleep(body.count(b'.'))
-    #     print(" [x] Done")
-    #     ch.basic_ack(delivery_tag=method.delivery_tag)
-    #
-    # def consume_interval_5(ch, method, properties, body):
-    #     print(" [x] Received %r" % body.decode())
-    #     # time.sleep(body.count(b'.'))
-    #     print(" [x] Done")
-    #     ch.basic_ack(delivery_tag=method.delivery_tag)
-
-    @staticmethod
-    def consume_intervals(bot):
+    def consume_intervals(cls,bot):
         while True:
-            queue_interval_1 = bot.username + "." + bot.symbol + "." + config["Interval_1"]
-            queue_interval_2 = bot.username + "." + bot.symbol + "." + config["Interval_2"]
-            queue_interval_3 = bot.username + "." + bot.symbol + "." + config["Interval_3"]
-            queue_interval_4 = bot.username + "." + bot.symbol + "." + config["Interval_4"]
-            queue_interval_5 = bot.username + "." + bot.symbol + "." + config["Interval_5"]
+                print(bot.username, bot.symbol)
+                queue_interval_1 = bot.username + "." + bot.symbol + "." + config["Interval_1"]
+                queue_interval_2 = bot.username + "." + bot.symbol + "." + config["Interval_2"]
+                queue_interval_3 = bot.username + "." + bot.symbol + "." + config["Interval_3"]
+                queue_interval_4 = bot.username + "." + bot.symbol + "." + config["Interval_4"]
+                queue_interval_5 = bot.username + "." + bot.symbol + "." + config["Interval_5"]
 
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_1, on_message_callback=Bot.consume_interval_1)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_2, on_message_callback=Bot.consume_interval_2)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_3, on_message_callback=Bot.consume_interval_3)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_4, on_message_callback=Bot.consume_interval_4)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_5, on_message_callback=Bot.consume_interval_5)
+                bot.app.rabbit_channel.basic_consume(queue=queue_interval_1,
+                                                     on_message_callback=bot.consume_interval_1)
+                bot.app.rabbit_channel.basic_consume(queue=queue_interval_2,
+                                                     on_message_callback=bot.consume_interval_2)
+                bot.app.rabbit_channel.basic_consume(queue=queue_interval_3,
+                                                     on_message_callback=bot.consume_interval_3)
+                bot.app.rabbit_channel.basic_consume(queue=queue_interval_4,
+                                                     on_message_callback=bot.consume_interval_4)
+                bot.app.rabbit_channel.basic_consume(queue=queue_interval_5,
+                                                     on_message_callback=bot.consume_interval_5)
 
-            bot.app.rabbit_channel.start_consuming()
+                bot.app.rabbit_channel.start_consuming()

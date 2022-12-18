@@ -11,7 +11,7 @@ class Abc(abc.ABC):
     def check(self):
         pass
 
-    @abstractclassmethod
+
     def on_price_change(cls, ts, price): None
 
 

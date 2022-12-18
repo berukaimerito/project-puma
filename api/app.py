@@ -192,8 +192,7 @@ def scripts():
             'symbol': symbol,
             }
 
-    if request.method == 'POST':
-        # if request.method == 'POST' and user.check_symbol(user_id, symbol):
+    if request.method == 'POST' and user.check_symbol(user_id, symbol):
         user.add_script(symbol, script, interval)
         user.save()
         json_object = json.dumps(data)

@@ -145,6 +145,7 @@ def feed_queue(app):
             print("Sending Queue...")
 
             for user in user_list:
+                print(user.user_name,user.symbol)
                 interval_1_queue = user.user_name + "." + user.symbol + "."      +config["Interval_1"]
                 interval_2_queue = user.user_name + "." + user.symbol + "." + config["Interval_2"]
                 interval_3_queue = user.user_name + "." + user.symbol + "." + config["Interval_3"]

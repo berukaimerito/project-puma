@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
@@ -14,10 +16,10 @@ import json
              status_code=status.HTTP_201_CREATED)  # response_model = Queue
 def create_queue(request: Request, queue: Queue = Body(...)):
     user_queue = UserQueue(queue.userName, queue.symbol)
-    print('create icerisinde ',queue.userName, queue.symbol)
+    user_list.append(user_queue)
+    time.sleep(5)
     queue_json = jsonable_encoder(queue)
     result = user_queue.start_feeding(user_queue)
-    user_list.append(user_queue)
 
 
 
@@ -27,7 +29,6 @@ def create_queue(request: Request, queue: Queue = Body(...)):
             'symbol':queue.symbol
         })
     loaded_r = json.loads(json_object)
-
     requests.post('http://127.0.0.1:8086/start_live_transfer',json=loaded_r)
 
 

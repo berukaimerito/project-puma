@@ -9,30 +9,35 @@ class Bot:
         self.symbol = symbol
         self.app = app
 
+    @staticmethod
     def consume_interval_1(ch, method, properties, body):
         print(f" [x] Received %r" % body.decode())
         # time.sleep(body.count(b'.'))
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+    @staticmethod
     def consume_interval_2(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         # time.sleep(body.count(b'.'))
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+    @staticmethod
     def consume_interval_3(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         # time.sleep(body.count(b'.'))
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+    @staticmethod
     def consume_interval_4(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         # time.sleep(body.count(b'.'))
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+    @staticmethod
     def consume_interval_5(ch, method, properties, body):
         print(" [x] Received %r" % body.decode())
         # time.sleep(body.count(b'.'))
