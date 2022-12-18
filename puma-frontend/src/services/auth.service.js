@@ -20,11 +20,12 @@ const login = async (username, password) => {
       password: password,
     })
     .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
+      const user = { ...response.data[0], accessToken: response.data[1] };
+      if (user.accessToken) {
+        localStorage.setItem("user", JSON.stringify(user));
       }
-      console.log(response.data);
-      return response.data;
+
+      return user;
     });
 };
 

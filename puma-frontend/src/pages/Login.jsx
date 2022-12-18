@@ -19,7 +19,7 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn && currentUser) {
-      // navigate('/dashboard')
+      navigate('/dashboard')
       // reload()
     }
   }, [isLoggedIn,navigate])
@@ -33,11 +33,11 @@ const Login = () => {
     <FormContainer>
       <h1>Sign In</h1>
       <Form onSubmit={submitHandler}>
-        <Form.Group controlId="email">
-          <Form.Label>Email Address</Form.Label>
+        <Form.Group controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type="email"
-            placeholder="Enter email"
+            type="username"
+            placeholder="Enter username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
