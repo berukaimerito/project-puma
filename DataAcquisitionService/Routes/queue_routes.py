@@ -15,6 +15,7 @@ import json
 @router.post("/create_queue", response_description="Create a new Queue",
              status_code=status.HTTP_201_CREATED)  # response_model = Queue
 def create_queue(request: Request, queue: Queue = Body(...)):
+    
     user_queue = UserQueue(queue.userName, queue.symbol)
     user_list.append(user_queue)
     time.sleep(5)

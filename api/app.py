@@ -186,7 +186,6 @@ def portfolio():
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
 @jwt_required()
 def dash():
-    response = {''}
     data = request.json
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
@@ -195,11 +194,10 @@ def dash():
         if request.method == 'DELETE':
             symbol = data['symbol']
             user.delete_script(symbol)
-            return jsonify(response)
+            return jsonify(symbol)
         return jsonify(response)
-
-    else:
-        return jsonify(response)
+    
+    return jsonify('No scripts')
 
 
 # @puma.route('/dashboard', methods=['POST', 'GET', 'PUT'])
@@ -247,10 +245,7 @@ def scripts():
         r ={'symbol': symbol, 'code': script}
         return make_response(jsonify(r))
  
-    return make_response(jsonify({'s': 'v'}))
    
-
-
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
 @jwt_required()

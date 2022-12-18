@@ -49,7 +49,7 @@ class UserRegister(Resource):
                         help='This field cannot be left blank')
     parser.add_argument('password', type=str, required=True,
                         help='This field cannot be left blank')
-    parser.add_argument('confirm password', type=str, required=False,
+    parser.add_argument('confirm password', type=str, required=True,
                         help='This field cannot be left blank')
 
     def post(self):
