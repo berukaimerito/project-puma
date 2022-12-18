@@ -19,6 +19,9 @@ from flask_jwt_extended import jwt_required
 from resources.user_resource import User, UserRegister, DeleteUser
 from resources.homepage import Home
 from flask_mail import Mail
+from flask import Flask
+from flask import Flask
+from flask_cors import CORS
 
 
 #env_path = Path("..") / ".pumavenv"
@@ -40,7 +43,7 @@ def token_required(function):
 
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
-
+CORS(puma)
 
 api = Api(puma)
 api.add_resource(UserRegister, "/register")
@@ -51,7 +54,7 @@ api.add_resource(DeleteUser, "/delete")
 
 puma.config["MONGODB_SETTINGS"] = [
     {
-        "db": "test",
+        "db": "integration",
         "host": "localhost",
         "port": 27017,
         "alias": "default",
@@ -68,6 +71,8 @@ puma.config['MAIL_PORT'] = 465
 puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
 puma.config['MAIL_PASSWORD'] = 'your_password'
 puma.config['MAIL_USE_TLS'] = False
+
+puma.config['CORS_HEADERS'] = 'Content-Type'
 
 
 

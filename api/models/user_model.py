@@ -74,7 +74,7 @@ class UserModel(Document):
 
     @staticmethod
     def getquery_mail(email):
-        return UserModel.objects.filter(mail=email).first()
+        return UserModel.objects.filter(email=email).first()
 
     @staticmethod
     def getquery_id(id):
