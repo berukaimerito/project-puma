@@ -35,15 +35,6 @@ async def startup_event():
     thread_queue.start()
 
 
-# @app.post("/feed")
-# async def feed_bot(data: Request):
-#     user_info= await data.json()
-#     print(user_info)
-#     thread_queue = threading.Thread(target=lambda: asyncio.run(StartQueueLoop(app,user_info)))
-#     thread_queue.setName("thread_queue")
-#     thread_queue.start()
-
-
 @app.on_event("shutdown")
 async def shutdown_event():
     app.mongodb_client.close()

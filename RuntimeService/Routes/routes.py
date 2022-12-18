@@ -27,6 +27,7 @@ def start_live_data(request: Request, user: User = Body(...)):
     thread.setName(user.userName + "_" + "consumer_thread")
     thread.setDaemon(True)
     thread.start()
+    print(f"{user.userName} has started to consume for {user.symbol}")
 
 
     user_json = jsonable_encoder(user)

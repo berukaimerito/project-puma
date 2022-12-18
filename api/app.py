@@ -191,7 +191,7 @@ def dash():
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     if user.scripts:
-        response = [{'symbol': i.symbol, 'interval': i.interval} for i in user.scripts]
+        response = [{'symbol': i.symbol} for i in user.scripts]
         if request.method == 'DELETE':
             symbol = data['symbol']
             user.delete_script(symbol)
