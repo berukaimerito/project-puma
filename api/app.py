@@ -241,14 +241,14 @@ def scripts():
         # json_object = json.dumps(data)
         # loaded_r = json.loads(json_object)
 
-        requests.post("http://127.0.0.1:8000/queues/create_queue", json=data, verify=False)
-        # requests.post("http://127.0.0.1:8086/start_live_transfer")
+        requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+
+
+        r ={'symbol': symbol, 'code': script}
+        return make_response(jsonify(r))
+ 
+    return make_response(jsonify({'s': 'v'}))
    
-
-
-
-    r ={'symbol': symbol, 'code': script}
-    return make_response(jsonify(r))
 
 
 
