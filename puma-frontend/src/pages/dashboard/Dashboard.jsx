@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { priceData } from './priceData'
 import Chart from '@qognicafinance/react-lightweight-charts'
-import { Button, Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import { Dropdown } from 'react-bootstrap'
 import ScriptList from '../../components/ScriptList'
 import scriptService from '../../services/script.service'
@@ -47,12 +46,6 @@ const Dashboard = () => {
   )
     
   useEffect(() => {
-    // console.log(candlestickSeries)
-    // console.log(options)
-
-    // console.log(interval)
-    // console.log(currency)
-
     scriptService.getAllScripts().then((response)=> {
       setScripts(response)
     })
@@ -69,30 +62,25 @@ const Dashboard = () => {
 
  
 
-  binanceSocket.onmessage = function (event) {
-    var message = JSON.parse(event.data)
+  // binanceSocket.onmessage = function (event) {
+  //   var message = JSON.parse(event.data)
 
-    var candlestick = message.k
-    date = date + 1200
-    console.log(date)
-    // console.log(candlestick.t)
+  //   var candlestick = message.k
+  //   date = date + 1200
+  //   console.log(date)
 
-    // var theTime = `${new Date(candlestick.t).getFullYear()}-${new Date(
-    //   candlestick.t
-    // ).getMonth()}-${Number(date) + increment}`
-    // console.log(theTime)
-      var newData = {
-        time: candlestick.t / 1000,
-        open: candlestick.o,
-        high: candlestick.h,
-        low: candlestick.l,
-        close: candlestick.c,
-      }
-      console.log(newData)
-      console.log(candlestickSeries)
-      // setCandlestickSeries((prevArray) => [...prevArray, newData])
+  //     var newData = {
+  //       time: candlestick.t / 1000,
+  //       open: candlestick.o,
+  //       high: candlestick.h,
+  //       low: candlestick.l,
+  //       close: candlestick.c,
+  //     }
+  //     console.log(newData)
+  //     console.log(candlestickSeries)
+  //     // setCandlestickSeries((prevArray) => [...prevArray, newData])
    
-  }
+  // }
 
   const selectInterval = (e) => {
     setInterval(e)
@@ -121,10 +109,15 @@ const Dashboard = () => {
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                       {currency ? (currency === 'btcusdt' ? 'BTC' : 'ETH') : 'Currency'}
                     </Dropdown.Toggle>
-
                     <Dropdown.Menu variant="dark">
                       <Dropdown.Item eventKey="btcusdt">BTC</Dropdown.Item>
                       <Dropdown.Item eventKey="ethusdt">ETH</Dropdown.Item>
+                      <Dropdown.Item eventKey="bnbcusdt">BNB</Dropdown.Item>
+                      <Dropdown.Item eventKey="xrpusdt">XRP</Dropdown.Item>
+                      <Dropdown.Item eventKey="adausdt">ADA</Dropdown.Item>
+                      <Dropdown.Item eventKey="solusdt">SOL</Dropdown.Item>
+                      <Dropdown.Item eventKey="dogeusdt">DOGE</Dropdown.Item>
+                      <Dropdown.Item eventKey="dotusdt">DOT</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                   <Dropdown className="d-inline mx-2" onSelect={selectInterval}>
