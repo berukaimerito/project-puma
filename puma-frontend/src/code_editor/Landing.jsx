@@ -14,8 +14,8 @@ import ThemeDropdown from './ThemeDropdown'
 import LanguagesDropdown from './LanguagesDropdown'
 import { Button, Col, Row } from 'react-bootstrap'
 import CurrencyDropDown from './CurrencyDropDown'
-import { useParams } from 'react-router'
-import scriptService from '../services/mock/script.service'
+import { useNavigate, useParams } from 'react-router'
+import scriptService from '../services/script.service'
 
 const javascriptDefault = `/**
 * Default code.
@@ -34,8 +34,9 @@ const Landing = () => {
   const [outputDetails, setOutputDetails] = useState(null)
   const [processing, setProcessing] = useState(null)
   const [theme, setTheme] = useState('cobalt')
-  const [currency, setCurrency] = useState('BTC')
+  const [currency, setCurrency] = useState('BTCUSDT')
   const [language, setLanguage] = useState(languageOptions[0])
+  const navigate = useNavigate()
 
   const params = useParams()
 
@@ -155,7 +156,7 @@ const Landing = () => {
   }
 
   function handleCurrencyChange(crr) {
-    setCurrency(crr)
+    setCurrency(crr.value)
   }
 
   useEffect(() => {
@@ -167,12 +168,28 @@ const Landing = () => {
   useEffect(() => {
     if (params.id) {
       console.log('test11111')
-      const script = scriptService.getScriptById(params.id)
-      console.log(script)
-      setCode(script[0].code)
+      scriptService.getScriptById(params.id).then((data)=> {
+        console.log(data)
+        setCode(data[0].code)
+      })
+     
     }
     console.log(code)
   }, [])
+
+  const saveCode = () => {
+    scriptService.saveScript(code, currency).then((data)=> {
+      console.log(data)
+      navigate("/dashboard")
+   })
+  }
+
+  const editCode = () => {
+    scriptService.editScript(currency, code).then((data)=> {
+      console.log(data)
+      navigate("/dashboard")
+   })
+  }
 
   const showSuccessToast = (msg) => {
     toast.success(msg || `Compiled Successfully!`, {
@@ -196,7 +213,7 @@ const Landing = () => {
       progress: undefined,
     })
   }
-
+  console.log(currency)
   return (
     <>
       <ToastContainer
@@ -242,7 +259,7 @@ const Landing = () => {
           </div>
           {outputDetails && <OutputDetails outputDetails={outputDetails} />}
           <div style={{ marginTop: '10px' }}>
-            <Button size="lg" variant="success">
+            <Button size="lg" variant="success" onClick={params.id ? editCode : saveCode}>
               {params.id ? 'Save Changes' : 'Save Script'}
             </Button>
           </div>

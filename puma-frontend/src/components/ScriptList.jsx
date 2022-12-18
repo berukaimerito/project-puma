@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router'
+import scriptService from '../services/script.service'
 
 function ScriptList({ scripts }) {
   console.log(scripts)
@@ -8,12 +9,13 @@ function ScriptList({ scripts }) {
   const navigate = useNavigate()
 
   const handleUse = (id) => {
-    navigate(`/script/${id}`)
+    navigate(`/scripts/${id}`)
   }
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this script?')) {
       console.log('delete')
+      scriptService.deleteById(id).then((data)=> console.log(data))
     }
   }
 
@@ -36,15 +38,15 @@ function ScriptList({ scripts }) {
                 <Card style={{ width: '18rem', marginTop: '5px' }}>
                   {/* <Card.Img variant="top" src={script.path} height={50} /> */}
                   <Card.Body>
-                    <Card.Title>{script.currency}</Card.Title>
+                    <Card.Title>{script.symbol}</Card.Title>
                     <Row>
                       <Col sm={6}>
-                        <Button variant="primary" onClick={() => handleUse(script._id)}>
+                        <Button variant="primary" onClick={() => handleUse(script.symbol)}>
                           Use
                         </Button>
                       </Col>
                       <Col sm={6}>
-                        <Button variant="danger" onClick={() => handleDelete(script._id)}>
+                        <Button variant="danger" onClick={() => handleDelete(script.symbol)}>
                           Delete
                         </Button>
                       </Col>

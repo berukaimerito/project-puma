@@ -3,13 +3,18 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/"; // backend api
 
-const saveScript = async (username, script, symbol, interval) => {
+const saveScript = async (script, symbol) => {
   return axios
-    .post(
-      API_URL + "scripts",
-      { username, script, symbol, interval },
-      { headers: authHeader() }
-    )
+    .post(API_URL + "scripts", { symbol, script }, { headers: authHeader() })
+    .then((response) => {
+      console.log(response.data);
+      return response.data;
+    });
+};
+
+const editScript = async (symbol, code) => {
+  return axios
+    .post(API_URL + "scripts/" + symbol, { code }, { headers: authHeader() })
     .then((response) => {
       console.log(response.data);
       return response.data;
@@ -17,16 +22,22 @@ const saveScript = async (username, script, symbol, interval) => {
 };
 
 const getScriptById = async (symbol) => {
-  return axios
-    .get(API_URL + "scripts/" + symbol, { headers: authHeader() })
-    .then((response) => {
-      console.log(response.data);
-      return response.data;
-    });
+  return axios({
+    method: "get",
+    url: API_URL + "scripts/" + symbol,
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "XXX",
+      Authorization: authHeader().Authorization,
+    },
+  }).then((response) => {
+    console.log(response.data);
+    return response.data;
+  });
 };
 
 const deleteById = async (symbol) => {
-  return axios.delete(API_URL + "scripts/" + symbol).then((response) => {
+  return axios.delete(API_URL + "dashboard", { symbol }).then((response) => {
     console.log(response.data);
     return response.data;
   });
@@ -50,7 +61,7 @@ const stopScript = async (symbol) => {
 
 const getAllScripts = async () => {
   return axios
-    .get(API_URL + "scripts", { headers: authHeader() })
+    .post(API_URL + "dashboard", {}, { headers: authHeader() })
     .then((response) => {
       console.log(response.data);
       return response.data;
@@ -64,6 +75,7 @@ const scriptService = {
   deleteById,
   runScript,
   stopScript,
+  editScript,
 };
 
 export default scriptService;

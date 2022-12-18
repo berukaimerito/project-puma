@@ -4,7 +4,7 @@ import Chart from '@qognicafinance/react-lightweight-charts'
 import { Button, Col, Container, Row } from 'react-bootstrap'
 import { Dropdown } from 'react-bootstrap'
 import ScriptList from '../../components/ScriptList'
-import scriptService from '../../services/mock/script.service'
+import scriptService from '../../services/script.service'
 import binanceService from '../../services/binance.service'
 
 const Dashboard = () => {
@@ -53,8 +53,9 @@ const Dashboard = () => {
     // console.log(interval)
     // console.log(currency)
 
-    const scriptsAll = scriptService.getAllScripts()
-    setScripts(scriptsAll)
+    scriptService.getAllScripts().then((response)=> {
+      setScripts(response)
+    })
 
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {
       setCandlestickSeries(data)
