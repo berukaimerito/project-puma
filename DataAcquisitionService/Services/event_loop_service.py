@@ -102,7 +102,7 @@ def save_candle_stick_and_ticker(app, candleSticks, symbol, interval, is_queue=F
         tickerModel.timestamp = str(datetime.datetime.utcnow())
         tickerModel.interval = interval
         tickerModel.symbol = symbol
-        ticker_id = 0xe
+        ticker_id = 0
 
         if not is_queue:
             # print("Saving...")
@@ -126,7 +126,6 @@ def save_candle_stick_and_ticker(app, candleSticks, symbol, interval, is_queue=F
 
         if not is_queue:
             candle_stick_id = SaveCandleStick(app, candleStickModel.to_mongo())
-      
 
     result = {
         "CandleStick": candleStickModel.to_json(),
@@ -145,25 +144,24 @@ def feed_queue(app):
         if user_list:
             print("Sending Queue...")
 
-
             for user in user_list:
+                print(user.user_name,user.symbol)
+                interval_1_queue = user.user_name + "." + user.symbol + "."      +config["Interval_1"]
+                interval_2_queue = user.user_name + "." + user.symbol + "." + config["Interval_2"]
+                interval_3_queue = user.user_name + "." + user.symbol + "." + config["Interval_3"]
+                interval_4_queue = user.user_name + "." + user.symbol + "." + config["Interval_4"]
+                interval_5_queue = user.user_name + "." + user.symbol + "." + config["Interval_5"]
 
-                interval_1_queue = user["userName"] + "." + user["symbol"] + "." + config["Interval_1"]
-                interval_2_queue = user["userName"] + "." + user["symbol"] + "." + config["Interval_2"]
-                interval_3_queue = user["userName"] + "." + user["symbol"] + "." + config["Interval_3"]
-                interval_4_queue = user["userName"] + "." + user["symbol"] + "." + config["Interval_4"]
-                interval_5_queue = user["userName"] + "." + user["symbol"] + "." + config["Interval_5"]
+                interval_1_message = interval_job_1m(app, user.symbol, config["Interval_1"], is_queue=True)
+                interval_2_message = interval_job_15m(app, user.symbol, config["Interval_2"], is_queue=True)
+                interval_3_message = interval_job_1h(app, user.symbol, config["Interval_3"], is_queue=True)
+                interval_4_message = interval_job_4h(app, user.symbol, config["Interval_4"], is_queue=True)
+                interval_5_message = interval_job_1d(app, user.symbol, config["Interval_5"], is_queue=True)
 
-                interval_1_message = interval_job_1m(app, user["symbol"], config["Interval_1"], is_queue=True)
-                interval_2_message = interval_job_15m(app, user["symbol"], config["Interval_2"], is_queue=True)
-                interval_3_message = interval_job_1h(app, user["symbol"], config["Interval_3"], is_queue=True)
-                interval_4_message = interval_job_4h(app, user["symbol"], config["Interval_4"], is_queue=True)
-                interval_5_message = interval_job_1d(app, user["symbol"], config["Interval_5"], is_queue=True)
-
-                UserQueue(user["userName"], user["symbol"]).feed_queues(interval_1_message, interval_1_queue)
-                UserQueue(user["userName"], user["symbol"]).feed_queues(interval_2_message, interval_2_queue)
-                UserQueue(user["userName"], user["symbol"]).feed_queues(interval_3_message, interval_3_queue)
-                UserQueue(user["userName"], user["symbol"]).feed_queues(interval_4_message, interval_4_queue)
-                UserQueue(user["userName"], user["symbol"]).feed_queues(interval_5_message, interval_5_queue)
+                UserQueue(user.user_name, user.symbol).feed_queues(interval_1_message, interval_1_queue)
+                UserQueue(user.user_name, user.symbol).feed_queues(interval_2_message, interval_2_queue)
+                UserQueue(user.user_name, user.symbol).feed_queues(interval_3_message, interval_3_queue)
+                UserQueue(user.user_name, user.symbol).feed_queues(interval_4_message, interval_4_queue)
+                UserQueue(user.user_name, user.symbol).feed_queues(interval_5_message, interval_5_queue)
 
                 Time.sleep(int(config["Frequency"]))

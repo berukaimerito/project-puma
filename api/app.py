@@ -242,11 +242,11 @@ def scripts():
         print(loaded_r['symbol'])
         print(loaded_r['userName'])
         requests.post("http://127.0.0.1:8000/queues/create_queue", json=loaded_r, verify=False)
-        #requests.post("http://127.0.0.1:8086/start_live_transfer")
+        requests.post("http://127.0.0.1:8086/start_live_transfer")
    
 
 
-        #################################################################################
+
         r ={'symbol': symbol, 'script': script}
         return make_response(jsonify(r))
 
