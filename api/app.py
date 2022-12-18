@@ -54,7 +54,7 @@ api.add_resource(DeleteUser, "/delete")
 
 puma.config["MONGODB_SETTINGS"] = [
     {
-        "db": "test",
+        "db": "integration",
         "host": "localhost",
         "port": 27017,
         "alias": "default",
@@ -71,6 +71,8 @@ puma.config['MAIL_PORT'] = 465
 puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
 puma.config['MAIL_PASSWORD'] = 'your_password'
 puma.config['MAIL_USE_TLS'] = False
+
+puma.config['CORS_HEADERS'] = 'Content-Type'
 
 
 
