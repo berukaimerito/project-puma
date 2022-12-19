@@ -11,24 +11,20 @@ from utils import *
 from flask import Flask, request, jsonify, make_response
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
-from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 from models.user_model import UserModel
 from flask_jwt_extended import jwt_required
 from resources.user_resource import User, UserRegister, DeleteUser
 from resources.homepage import Home
-from flask_mail import Mail
 from flask import Flask
 from flask import Flask
-from flask_cors import CORS,    cross_origin
+from flask_cors import CORS,cross_origin
 from dotenv import dotenv_values
 from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
 from flask import jsonify, json, make_response
-from flask_cors import cross_origin
 from models.user_model import *
 from utils import *
 from common.encoder import MongoEncoder
-from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
 config = dotenv_values()
@@ -59,6 +55,11 @@ def token_required(function):
 
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
+cors = CORS(puma, resource={
+    r"/*":{
+        "origins":"*"
+    }
+})
 
 
 puma.config["MONGODB_SETTINGS"] = [
@@ -86,14 +87,17 @@ puma.config['MAIL_USE_SSL'] = False
 
 
 
-mail = Mail(puma)
-csrf = CSRFProtect()
-csrf.init_app(puma)
+# csrf = CSRFProtect()
+# csrf.init_app(puma)
 db.init_app(puma)
 jwt = JWTManager(puma)
 
-CORS(puma)
-
+# @puma.after_request
+# def after_request(response):
+#   response.headers.add('Access-Control-Allow-Origin', '*')
+#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#   return response   
 
 
 @puma.route("/home")
@@ -126,6 +130,7 @@ def change_password():
     pass
 
 @puma.route("/login", methods = ['POST'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def user_login():
     data = request.json
     user_name, password = data['username'], data['password']
@@ -147,6 +152,7 @@ def user_login():
     return {'message': 'Wrong username or password.'}, 401
 
 @puma.route("/register", methods = ['POST'] )
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def register_user():
     data = request.json
     username, email, surname, password, confirm = data['username'], data['email'], data['surname'], data['password'], data['confirm']
@@ -226,6 +232,7 @@ def portfolio():
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
 def dash():
     data = request.json

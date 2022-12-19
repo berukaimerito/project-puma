@@ -5,7 +5,6 @@ from models.user_model import *
 from utils import *
 from common.encoder import MongoEncoder
 from flask_restful import Resource, reqparse
-from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
