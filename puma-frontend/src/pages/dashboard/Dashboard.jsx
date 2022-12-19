@@ -107,7 +107,7 @@ const Dashboard = () => {
                 <div className="d-flex justify-content-end" style={{ marginBottom: '20px' }}>
                   <Dropdown className="d-inline mx-2" onSelect={selectCurrency}>
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                      {currency ? (currency === 'btcusdt' ? 'BTC' : 'ETH') : 'Currency'}
+                      {currency}
                     </Dropdown.Toggle>
                     <Dropdown.Menu variant="dark">
                       <Dropdown.Item eventKey="btcusdt">BTC</Dropdown.Item>

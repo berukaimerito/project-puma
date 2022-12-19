@@ -37,7 +37,16 @@ const getScriptById = async (symbol) => {
 };
 
 const deleteById = async (symbol) => {
-  return axios.delete(API_URL + "dashboard", { symbol }).then((response) => {
+  return axios({
+    method: "delete",
+    url: API_URL + "scripts/" + symbol,
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "XXX",
+      Authorization: authHeader().Authorization,
+    },
+    data: { symbol },
+  }).then((response) => {
     console.log(response.data);
     return response.data;
   });
