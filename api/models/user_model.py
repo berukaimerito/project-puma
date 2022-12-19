@@ -17,11 +17,30 @@ class UserModel(Document):
     scripts = ListField(EmbeddedDocumentField(ScriptModel))
     
     
+    def edit_user_pswd(self, pswd):
+        new_pswd = generate_password_hash(pswd)
+        self.password = new_pswd
+        return True
+    
+    def edit_user_mail(self, email):
+        self.email = email
+        return True
+
+    def edit_user_surname(self, surname):
+        self.surname = surname
+        return True
+
+    def edit_user_name(self, username):
+        self.username = username
+        return True
+        
+
     def add_portfolio(self, symbol):
         self.portfolio.append((PortfolioModel(symbol=symbol)))
 
-    def add_script(self, symbol, pyscript):
-        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript)))
+    def add_script(self, symbol, pyscript, path):
+        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, path=path)))
+    
 
     def delete_script(self, symbol):
 

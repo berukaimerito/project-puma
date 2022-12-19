@@ -92,12 +92,6 @@ puma.config['MAIL_USE_SSL'] = False
 db.init_app(puma)
 jwt = JWTManager(puma)
 
-# @puma.after_request
-# def after_request(response):
-#   response.headers.add('Access-Control-Allow-Origin', '*')
-#   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-#   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-#   return response   
 
 
 @puma.route("/home")
@@ -180,37 +174,39 @@ def register_user():
     msg = {'message': 'User has been created successfully.'}
     return make_response(jsonify(user, msg), 200)
 
+
+@puma.route("/profile", methods =['DELETE', 'POST', 'PUT', 'GET'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
-@puma.route("/edit", methods =['DELETE'])
-def delete():
+def edit():
     user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
-    UserModel.objects(id=user_id).delete()
-    pass
+    user = UserModel.getquery_id(user_id)
+    data  =  request.json
+    new_name = data['username']
+    new_pswd = data['password']
+
+
+    if request.method == 'GET':
+        user.delete()
+
+    if request.method == 'PUT' and new_name:
+        user.edit_user_name(new_name)
+        user.save()
+        return jsonify(user)
+
+    if request.method == 'PUT' and new_name:
+        user.edit_user_name(new_name)
+        user.save()
+        return jsonify(user)
+
 
 @puma.route("/historical_klines", methods=['POST', 'GET'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def default_chart():
     data = request.json
     symbol = data['symbol']
     interval = data['interval']
     return get_historical_kline(symbol, interval)
-
-
-main_page_currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT', 'DOGEUSDT', 'MATICUSDT']
-
-
-@puma.route("/currencies", methods=['GET'])
-def live_currencies_main(symbol):
-    return main_page_currencies
-
-
-@puma.route("/dashboard/currencies", defaults={'symbol': 'BTCUSDT', 'interval': '4h'}, methods=['POST', 'GET'])
-def live_currencies_dashboard(symbol):
-
-    currencies = ['BTCUSDT', 'AVAXUSDT', 'ETHUSDT']
-    currencies.insert(0, symbol)
-    currencies.pop()
-
-
 
 @puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
 @jwt_required()
@@ -272,32 +268,43 @@ def dash():
 
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def scripts():
     # users get queue data
-    data = request.json
-    symbol,script = data['symbol'],data['code']
-    user_id = get_id(str_to_dict(get_jwt_identity()))
-    user = UserModel.getquery_id(user_id)
-    data = {'userName': user.username,
+    if request.method == 'GET':
+        val  = "fun()"
+        r = {'code': val}
+        return jsonify(r)
+
+    if request.method == 'POST' and user.check_symbol(user_id, symbol):
+         data = request.json
+         symbol,script = data['symbol'],data['code']
+         user_id = get_id(str_to_dict(get_jwt_identity()))
+         user = UserModel.getquery_id(user_id)
+         data = {'userName': user.username,
             'symbol': symbol,
             }
-    if request.method == 'POST' and user.check_symbol(user_id, symbol):
-        user.add_script(symbol, script)
-        user.save()
-        #
-        # json_object = json.dumps(data)
-        # loaded_r = json.loads(json_object)
+         with open(f"user_scripts/{user.username}.py", "w") as user_script:
+            user_script.write(f"{script}")
+            path = f"user_scripts/{user.username}.py"
 
-        requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
-
-        r ={'symbol': symbol, 'code': script}
-        return make_response(jsonify(r))
+            user.add_script(symbol, script, path)
     
-    return {''}
+        
+            user.save()
+
+
+            requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+
+            r ={'symbol': symbol, 'code': script}
+            return make_response(jsonify(r))
+    
+    return jsonify()
  
    
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
 def execute_script(symbol):
 

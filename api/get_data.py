@@ -1,5 +1,6 @@
 import urllib.request
 import json
+from flask import jsonify
 from urllib.parse import urljoin, urlencode
 import requests as r
 
@@ -26,8 +27,7 @@ def get_historical_kline(symbol, interval):
 
 
 
-        print((processed_candlestick))
-        return processed_candlestick
+        return jsonify(processed_candlestick)
 
 
 

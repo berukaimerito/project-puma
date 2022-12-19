@@ -53,10 +53,32 @@ const Dashboard = () => {
       setScripts(res.msg === 'No scripts' ? [] : response)
     })
 
+
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {
       setCandlestickSeries(data)
     })
-   
+
+  
+    binanceSocket.onmessage = function (event) {
+      var message = JSON.parse(event.data)
+  
+      var candlestick = message.k
+      date = date + 1200
+      console.log(date)
+  
+        var newData = {
+          time: candlestick.t / 1000,
+          open: candlestick.o,
+          high: candlestick.h,
+          low: candlestick.l,
+          close: candlestick.c,
+        }
+        console.log(newData)
+        console.log(candlestickSeries)
+        setCandlestickSeries(newData)
+     
+    }
+  
 
     return () => {
       binanceSocket.close()
@@ -65,25 +87,7 @@ const Dashboard = () => {
 
  
 
-  // binanceSocket.onmessage = function (event) {
-  //   var message = JSON.parse(event.data)
 
-  //   var candlestick = message.k
-  //   date = date + 1200
-  //   console.log(date)
-
-  //     var newData = {
-  //       time: candlestick.t / 1000,
-  //       open: candlestick.o,
-  //       high: candlestick.h,
-  //       low: candlestick.l,
-  //       close: candlestick.c,
-  //     }
-  //     console.log(newData)
-  //     console.log(candlestickSeries)
-  //     // setCandlestickSeries((prevArray) => [...prevArray, newData])
-   
-  // }
 
   const selectInterval = (e) => {
     setInterval(e)
