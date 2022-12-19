@@ -43,12 +43,13 @@ var candleSeries = chart.addCandlestickSeries({
 
 
 
-fetch('http://127.0.0.1:5000/chart')
+fetch('http://127.0.0.1:5000/historical_klines')
 	.then((r) => r.json())
 	.then((response) => {
 		console.log(response)
 		candleSeries.setData(response);
 	})
+
 var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@kline_1m");
 binanceSocket.onmessage = function (event) {
 	var message = JSON.parse(event.data);

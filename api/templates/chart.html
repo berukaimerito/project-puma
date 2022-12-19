@@ -10,16 +10,16 @@
     <div id="chart"></div>
     <div id="trades"></div>
 
-<!--    <script>-->
-<!--        var tradeDiv = document.getElementById('trades');-->
+    <script>
+        var tradeDiv = document.getElementById('trades');
 
-<!--        // binanceSocket.onmessage = function (event) {-->
-<!--        //     console.log(event.data);-->
-<!--        //     var messageObject = JSON.parse(event.data)-->
-<!--        //     tradeDiv.append(messageObject.p)-->
+        binanceSocket.onmessage = function (event) {
+        console.log(event.data);
+        var messageObject = JSON.parse(event.data)
+        tradeDiv.append(messageObject.p)
+        }
 
-<!--        }-->
-<!--    </script>-->
+    </script>
 
 
 </head>
