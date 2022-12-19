@@ -53,7 +53,7 @@ def token_required(function):
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
-CORS(puma, resources={r"*": {"origins": "*", "allow_headers": "*", "expose_headers": "*"}})
+CORS(puma, resources={r"/*": {"origins": "*", "allow_headers": "*", "expose_headers": "*"}})
 
 
 api = Api(puma)
@@ -253,7 +253,7 @@ def portfolio():
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
-@cross_origin(allow_headers=['Content-Type'])
+# @cross_origin(allow_headers=['Content-Type'])
 @cross_origin()
 @jwt_required()
 def dash():
@@ -293,7 +293,7 @@ def dash():
 
 
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
-@cross_origin(allow_headers=['Content-Type'])
+@cross_origin()
 @jwt_required()
 def scripts():
     # users get queue data
@@ -320,7 +320,7 @@ def scripts():
    
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
-@cross_origin(allow_headers=['Content-Type'])
+@cross_origin()
 @jwt_required()
 def execute_script(symbol):
 
