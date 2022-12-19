@@ -103,14 +103,16 @@ def user_login():
                 "email": user.email,
                 "password": user.password
             }
-            response =jsonify(user_r, access_token)
-            return response
-
-    return {'message': 'Wrong username or password.'}, 401
+            
+            return jsonify(user_r, access_token)
+    
+    msg = {'msg': 'Welcome'}
+    return jsonify(msg)
 
 @puma.route("/register", methods = ['POST'] )
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def register_user():
+
     data = request.json
     username, email, surname, password, confirm = data['username'], data['email'], data['surname'], data['password'], data['confirm']
 
@@ -142,6 +144,7 @@ def register_user():
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
 def edit():
+
     user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
     user = UserModel.getquery_id(user_id)
     data  =  request.json
@@ -166,6 +169,7 @@ def edit():
 @puma.route("/historical_klines", methods=['POST', 'GET'])
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def default_chart():
+
     data = request.json
     symbol = data['symbol']
     interval = data['interval']
@@ -177,6 +181,7 @@ def default_chart():
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
 def dash():
+
     data = request.json
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
@@ -190,21 +195,24 @@ def dash():
     all_scripts =jsonify(symbol)
     return all_scripts
 
-@puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
+@puma.route('/dashboard/portfolio', methods=['GET'])
 @jwt_required()
 def portfolio():
+
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     port=[]
-    for script in user.scripts:
-        port.append({script.symbol,script.profit})
+    if request.method == 'GET':
+        for script in user.scripts:
+            port.append({script.symbol,script.profit})
+        return jsonify(port)
+    return jsonify(user)
 
-
-    return jsonify(port)
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def scripts():
+
     # users get queue data
     if request.method == 'GET':
         val  = "fun()"
@@ -231,14 +239,18 @@ def scripts():
     
     return jsonify()
  
-@puma.route("/run")
+
+
+@puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
-def run_script_start_rs_queues():
-    data = request.json
-    username = data['username']
-    symbol = data['symbol']
-    data = {'userName': username, 'symbol': symbol }
-    requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+def run_script_start_rs_queues(symbol):
+
+    if request.method == 'POST':
+            user_id = get_id(str_to_dict(get_jwt_identity()))
+            user = UserModel.getquery_id(user_id)
+            data = {'userName': user.usernames, 'symbol': symbol }
+            requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
@@ -272,7 +284,7 @@ def execute_script(symbol):
             })
 
             loaded_r = json.loads(json_object)
-            requests.post("http://127.0.0.1:8000/create_queue", json=loaded_r)
+
             return make_response(loaded_r)
 
 puma.run(host="127.0.0.1", port=5000, debug=True)
