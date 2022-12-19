@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router'
 import scriptService from '../services/script.service'
 
-function ScriptList({ scripts }) {
-  console.log(scripts)
+function ScriptList({ scripts, setScripts }) {
+  console.log(scripts)  
 
   const navigate = useNavigate()
 
@@ -16,6 +16,7 @@ function ScriptList({ scripts }) {
     if (window.confirm('Are you sure you want to delete this script?')) {
       console.log('delete')
       scriptService.deleteById(id).then((data)=> console.log(data))
+      setScripts(scripts.filter(sc => sc.symbol !== id))
     }
   }
 

@@ -47,7 +47,7 @@ const Dashboard = () => {
     
   useEffect(() => {
     scriptService.getAllScripts().then((response)=> {
-      setScripts(response)
+      setScripts(response || [])
     })
 
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {
@@ -99,7 +99,7 @@ const Dashboard = () => {
             <Col sm={4}>
               <div style={{ marginTop: '60px' }}>
                 {/* TODO: Replace with sriptcs list components */}
-                <ScriptList scripts={scripts}></ScriptList>
+                <ScriptList scripts={scripts} setScripts={setScripts}></ScriptList>
               </div>
             </Col>
             <Col sm={8}>
