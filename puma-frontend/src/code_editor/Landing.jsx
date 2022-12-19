@@ -21,17 +21,12 @@ const javascriptDefault = `/**
 * Default code.
 */
 
-
-const basicFunction = () => {
- return 2+2;
-};
-console.log(basicFunction());
 `
 
 const Landing = () => {
   const params = useParams()
 
-  const [code, setCode] = useState(javascriptDefault)
+  const [code, setCode] = useState(params.id ? '' : javascriptDefault)
   const [customInput, setCustomInput] = useState('')
   const [outputDetails, setOutputDetails] = useState(null)
   const [processing, setProcessing] = useState(false)
@@ -94,7 +89,7 @@ const Landing = () => {
       console.log('test11111')
       scriptService.getScriptById(params.id).then((data)=> {
         console.log(data)
-        setCode(data[0].code)
+        setCode(data.code)
       })
      
     }
@@ -126,15 +121,15 @@ const Landing = () => {
   }
 
   const handleRun = () => {
-    setProcessing(true)
+    // setProcessing(true)
 
     scriptService.runScript(currency).then((data)=> {
       console.log(data)
-      setProcessing(false)
+      // setProcessing(false)
 
       navigate("/dashboard")
    }).catch(()=> {
-    setProcessing(false)
+    // setProcessing(false)
   })
   }
 

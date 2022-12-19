@@ -49,14 +49,15 @@ const editScript = async (symbol, code) => {
 
 const getScriptById = async (symbol) => {
   return axios({
-    method: "get",
-    url: API_URL + "scripts/" + symbol,
+    method: "post",
+    url: API_URL + "scripts-by/" + symbol,
     headers: {
       "X-API-KEY": "XXX",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       Authorization: authHeader().Authorization,
     },
+    data: {},
     withCredentials: false,
   }).then((response) => {
     console.log(response.data);
@@ -83,7 +84,18 @@ const deleteById = async (symbol) => {
 };
 
 const runScript = async (symbol) => {
-  return axios.post(API_URL + "scripts/" + symbol + "/run").then((response) => {
+  return axios({
+    method: "post",
+    url: API_URL + "scripts/" + symbol + "/run",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "XXX",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      Authorization: authHeader().Authorization,
+    },
+    data: {},
+  }).then((response) => {
     console.log(response.data);
     return response.data;
   });

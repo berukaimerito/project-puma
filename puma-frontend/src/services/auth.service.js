@@ -10,7 +10,7 @@ const register = async (name, surname, email, password, confirmPassword) => {
       surname,
       email,
       password,
-      "confirm password": confirmPassword,
+      confirm: confirmPassword,
     })
     .then((response) => {
       console.log(response);

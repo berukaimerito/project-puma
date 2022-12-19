@@ -248,11 +248,27 @@ def run_script_start_rs_queues(symbol):
     if request.method == 'POST':
             user_id = get_id(str_to_dict(get_jwt_identity()))
             user = UserModel.getquery_id(user_id)
-            data = {'userName': user.usernames, 'symbol': symbol }
+            data = {'userName': user.username, 'symbol': symbol }
             requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+            return "script run successfully"
 
+@puma.route('/scripts-by/<symbol>', methods=['POST'])
+@cross_origin(origin='*')
+@jwt_required()
+def getscript_by_symbol(symbol):
 
-@puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
+    user_id = get_id(str_to_dict(get_jwt_identity()))
+    user = UserModel.getquery_id(user_id)
+    
+    data = request.json
+
+    if request.method == 'POST':
+        for i in user.scripts:
+            if str(i.symbol) == str(symbol):
+                r = {"currency": str(i.symbol),"code": str(i.pyscript)}
+                return jsonify(r)
+
+@puma.route('/scripts/<symbol>', methods=['POST', 'PUT'])
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 @jwt_required()
 def execute_script(symbol):
@@ -262,11 +278,6 @@ def execute_script(symbol):
     
     data = request.json
 
-    if request.method == 'GET':
-        for i in user.scripts:
-            if str(i.symbol) == str(symbol):
-                r = {"currency": str(i.symbol),"code": str(i.pyscript)}
-                return make_response(jsonify(r))
                
     if request.method == 'POST':
         new_script = data['code']
