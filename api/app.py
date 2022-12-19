@@ -31,9 +31,16 @@ from common.encoder import MongoEncoder
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-
 config = dotenv_values()
+
+
+# def send_mail(user):
+#     msg = Message('Hello from the other side!', sender='fec0f6c31ed308@mailtrap.io', recipients = [user])
+#     msg.body = f"Hey {user}, sending you this email from my Flask app, lmk if it works"
+#     mail.send(msg)
+#     return "Message sent!"
+
+
 
 def token_required(function):
     @wraps(function)
@@ -53,15 +60,6 @@ def token_required(function):
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
 
-CORS(puma, resources={r"/*": {"origins": "*", "allow_headers": "*", "expose_headers": "*"}})
-
-
-api = Api(puma)
-#api.add_resource(UserRegister, "/register")
-api.add_resource(User, "/login")
-api.add_resource(Home, "/homepage")
-#api.add_resource(DeleteUser, "/delete")
-
 
 puma.config["MONGODB_SETTINGS"] = [
     {
@@ -77,17 +75,14 @@ puma.config["SECRET_KEY"] = "secretsecret"
 puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
 puma.config['JSON_SORT_KEYS'] = False
 puma.config['CORS_HEADERS'] = 'Content-Type'
-puma.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
+puma.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=12)
 
-
-puma.config['MAIL_SERVER']='smtp.gmail.com'
-puma.config['MAIL_PORT'] = 465
-puma.config['MAIL_USERNAME'] = 'puma.project.pwr@gmail.com'
-puma.config['MAIL_PASSWORD'] = config['MAIL_PASSWORD']
+puma.config['MAIL_SERVER']='smtp.mailtrap.io'
+puma.config['MAIL_PORT'] = 2525
+puma.config['MAIL_USERNAME'] = 'fec0f6c31ed308'
+puma.config['MAIL_PASSWORD'] = 'c259b7cf222ee6'
 puma.config['MAIL_USE_TLS'] = True
 puma.config['MAIL_USE_SSL'] = False
-
-
 
 
 
@@ -97,31 +92,10 @@ csrf.init_app(puma)
 db.init_app(puma)
 jwt = JWTManager(puma)
 
-# jwt = JWT(app, authenticate, identity)  # Auto Creates /auth endpoint
-
-
-#
-# from binance import ThreadedWebsocketManager
-#
-# twm = ThreadedWebsocketManager(api_key=API_KEY, api_secret=API_SECRET)
-# # start is required to initialise its internal loop
-# twm.start()
-#
-
-# def handle_socket_message(msg):
-#     print(f"message type: {msg['e']}")§
-#     print(msg)
-#
-
-
-# @user.route('/<user_id>', defaults={'username': None})
-# @user.route('/<user_id>/<username>')
-# def show(user_id, username):
-#     pass
-#
-
-
 CORS(puma)
+
+
+
 @puma.route("/home")
 @puma.route("/")
 def welcome():
@@ -148,7 +122,6 @@ def welcome():
 
 @puma.route('/<username>/password', methods = ['GET', 'PUT'])
 @jwt_required()
-@cross_origin(allow_headers=['Content-Type'])
 def change_password():
     pass
 
@@ -168,8 +141,8 @@ def user_login():
                 "email": user.email,
                 "password": user.password
             }
-
-            return jsonify(user_r, access_token)
+            response =jsonify(user_r, access_token)
+            return response
 
     return {'message': 'Wrong username or password.'}, 401
 
@@ -180,10 +153,13 @@ def register_user():
 
     if UserModel.getquery_name(username) or UserModel.getquery_mail(email):
         msg = {'message': 'Username or email has already been created, aborting.'}
-        return make_response(jsonify(msg), 200)
+        r = jsonify(msg)
+        r.headers.add('Access-Control-Allow-Origin', '*')
+        return make_response(jsonify(msg, r), 200)
 
     if password != confirm:
         msg = {'message': 'Passwords does not match.'}
+        
         return make_response(jsonify(msg), 200)
 
     user = UserModel(
@@ -193,11 +169,12 @@ def register_user():
         password=UserModel.hash_password(password)
     )
     user.save()
+    #send_mail(user=email)
+
     msg = {'message': 'User has been created successfully.'}
     return make_response(jsonify(user, msg), 200)
 
 @jwt_required()
-@cross_origin(allow_headers=['Content-Type'])
 @puma.route("/edit", methods =['DELETE'])
 def delete():
     user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
@@ -227,13 +204,9 @@ def live_currencies_dashboard(symbol):
     currencies.insert(0, symbol)
     currencies.pop()
 
-    # return redirect(url_for('display_charts',symbol=symbol,interval=interval))
-
-
 
 
 @puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
-@cross_origin(allow_headers=['Content-Type'])
 @jwt_required()
 def portfolio():
 
@@ -253,8 +226,6 @@ def portfolio():
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
-# @cross_origin(allow_headers=['Content-Type'])
-@cross_origin()
 @jwt_required()
 def dash():
     data = request.json
@@ -293,7 +264,6 @@ def dash():
 
 
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
-@cross_origin()
 @jwt_required()
 def scripts():
     # users get queue data
@@ -313,14 +283,14 @@ def scripts():
 
         requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
 
-
         r ={'symbol': symbol, 'code': script}
         return make_response(jsonify(r))
+    
+    return {''}
  
    
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
-@cross_origin()
 @jwt_required()
 def execute_script(symbol):
 
