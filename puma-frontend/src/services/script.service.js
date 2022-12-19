@@ -3,11 +3,11 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/"; // backend api
 
-const saveScript = async (script, symbol) => {
+const saveScript = async (code, symbol) => {
   return axios
     .post(
       API_URL + "scripts",
-      { symbol, script },
+      { symbol, code },
       {
         headers: {
           Authorization: authHeader().Authorization,
