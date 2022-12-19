@@ -3,13 +3,13 @@ import Select from 'react-select'
 import { styles as customStyles } from '../constants/styles'
 import { currencies } from '../constants/currencies'
 
-const CurrencyDropDown = ({ handleCurrencyChange }) => {
+const CurrencyDropDown = ({ handleCurrencyChange, currencyId }) => {
   return (
     <Select
       placeholder={`Select Currency`}
       options={currencies}
       styles={customStyles}
-      defaultValue={currencies[0]}
+      defaultValue={currencyId ? currencies.filter(curr => curr.value === currencyId) : currencies[0]}
       onChange={(selectedOption) => handleCurrencyChange(selectedOption)}
     />
   )

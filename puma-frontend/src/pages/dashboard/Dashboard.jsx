@@ -47,7 +47,10 @@ const Dashboard = () => {
     
   useEffect(() => {
     scriptService.getAllScripts().then((response)=> {
-      setScripts(response || [])
+      let res = {
+        msg: response
+      }
+      setScripts(res.msg === 'No scripts' ? [] : response)
     })
 
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {

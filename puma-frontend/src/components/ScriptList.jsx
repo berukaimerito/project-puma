@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router'
 import scriptService from '../services/script.service'
 
 function ScriptList({ scripts, setScripts }) {
-  console.log(scripts)  
-
+  console.log(scripts) 
+  
   const navigate = useNavigate()
 
   const handleUse = (id) => {

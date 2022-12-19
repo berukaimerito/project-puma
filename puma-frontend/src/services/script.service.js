@@ -5,7 +5,20 @@ const API_URL = "http://localhost:5000/"; // backend api
 
 const saveScript = async (script, symbol) => {
   return axios
-    .post(API_URL + "scripts", { symbol, script }, { headers: authHeader() })
+    .post(
+      API_URL + "scripts",
+      { symbol, script },
+      {
+        headers: {
+          Authorization: authHeader().Authorization,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+          "Content-Type": "application/json",
+          "X-API-KEY": "XXX",
+        },
+        withCredentials: false,
+      }
+    )
     .then((response) => {
       console.log(response.data);
       return response.data;
@@ -14,7 +27,20 @@ const saveScript = async (script, symbol) => {
 
 const editScript = async (symbol, code) => {
   return axios
-    .post(API_URL + "scripts/" + symbol, { code }, { headers: authHeader() })
+    .post(
+      API_URL + "scripts/" + symbol,
+      { code },
+      {
+        headers: {
+          Authorization: authHeader().Authorization,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+          "Content-Type": "application/json",
+          "X-API-KEY": "XXX",
+        },
+        withCredentials: false,
+      }
+    )
     .then((response) => {
       console.log(response.data);
       return response.data;
@@ -26,10 +52,12 @@ const getScriptById = async (symbol) => {
     method: "get",
     url: API_URL + "scripts/" + symbol,
     headers: {
-      "Content-Type": "application/json",
       "X-API-KEY": "XXX",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       Authorization: authHeader().Authorization,
     },
+    withCredentials: false,
   }).then((response) => {
     console.log(response.data);
     return response.data;
@@ -43,6 +71,8 @@ const deleteById = async (symbol) => {
     headers: {
       "Content-Type": "application/json",
       "X-API-KEY": "XXX",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       Authorization: authHeader().Authorization,
     },
     data: { symbol },

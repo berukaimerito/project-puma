@@ -29,16 +29,17 @@ console.log(basicFunction());
 `
 
 const Landing = () => {
+  const params = useParams()
+
   const [code, setCode] = useState(javascriptDefault)
   const [customInput, setCustomInput] = useState('')
   const [outputDetails, setOutputDetails] = useState(null)
   const [processing, setProcessing] = useState(null)
   const [theme, setTheme] = useState('cobalt')
-  const [currency, setCurrency] = useState('BTCUSDT')
+  const [currency, setCurrency] = useState(params.id ? params.id : 'BTCUSDT')
   const [language, setLanguage] = useState(languageOptions[0])
   const navigate = useNavigate()
 
-  const params = useParams()
 
   const enterPress = useKeyPress('Enter')
   const ctrlPress = useKeyPress('Control')
@@ -173,7 +174,7 @@ const Landing = () => {
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </Col>
         <Col sm={2} className="px-4 py-2">
-          <CurrencyDropDown handleCurrencyChange={handleCurrencyChange} theme={theme} />
+          <CurrencyDropDown handleCurrencyChange={handleCurrencyChange} currencyId={params.id ? params.id : ""} theme={theme} />
         </Col>
       </Row>
       <Row>
