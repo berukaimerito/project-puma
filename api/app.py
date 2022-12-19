@@ -2,18 +2,17 @@ import json
 import requests
 from functools import wraps
 from utils import *
+from datetime import timedelta
 from db import db
 from config import API_SECRET, API_KEY
 from get_data import get_historical_kline
-from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
+from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
 from utils import *
-from flask import Flask, request, jsonify, make_response, Response
+from flask import Flask, request, jsonify, make_response
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_restful import Api
 from flask_mail import Mail
-# from flask_api import status
 from flask_wtf.csrf import CSRFProtect
-from werkzeug.exceptions import HTTPException
 from models.user_model import UserModel
 from flask_jwt_extended import jwt_required
 from resources.user_resource import User, UserRegister, DeleteUser
@@ -21,10 +20,20 @@ from resources.homepage import Home
 from flask_mail import Mail
 from flask import Flask
 from flask import Flask
-from flask_cors import CORS
+from flask_cors import CORS,    cross_origin
+from dotenv import dotenv_values
+from flask_jwt_extended import create_access_token, jwt_required, current_user, get_jwt_identity
+from flask import jsonify, json, make_response
+from flask_cors import cross_origin
+from models.user_model import *
+from utils import *
+from common.encoder import MongoEncoder
+from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-#env_path = Path("..") / ".pumavenv"
+
+config = dotenv_values()
 
 def token_required(function):
     @wraps(function)
@@ -43,13 +52,15 @@ def token_required(function):
 
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
-CORS(puma)
+
+CORS(puma, resources={r"*": {"origins": "*", "allow_headers": "*", "expose_headers": "*"}})
+
 
 api = Api(puma)
-api.add_resource(UserRegister, "/register")
+#api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/login")
 api.add_resource(Home, "/homepage")
-api.add_resource(DeleteUser, "/delete")
+#api.add_resource(DeleteUser, "/delete")
 
 
 puma.config["MONGODB_SETTINGS"] = [
@@ -65,12 +76,16 @@ puma.config['WTF_CSRF_ENABLED'] = False
 puma.config["SECRET_KEY"] = "secretsecret"
 puma.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"
 puma.config['JSON_SORT_KEYS'] = False
+puma.config['CORS_HEADERS'] = 'Content-Type'
+puma.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
+
 
 puma.config['MAIL_SERVER']='smtp.gmail.com'
 puma.config['MAIL_PORT'] = 465
-puma.config['MAIL_USERNAME'] = 'your_email@gmail.com'
-puma.config['MAIL_PASSWORD'] = 'your_password'
-puma.config['MAIL_USE_TLS'] = False
+puma.config['MAIL_USERNAME'] = 'puma.project.pwr@gmail.com'
+puma.config['MAIL_PASSWORD'] = config['MAIL_PASSWORD']
+puma.config['MAIL_USE_TLS'] = True
+puma.config['MAIL_USE_SSL'] = False
 
 
 
@@ -133,7 +148,60 @@ def welcome():
 
 @puma.route('/<username>/password', methods = ['GET', 'PUT'])
 @jwt_required()
+@cross_origin(allow_headers=['Content-Type'])
 def change_password():
+    pass
+
+@puma.route("/login", methods = ['POST'])
+def user_login():
+    data = request.json
+    user_name, password = data['username'], data['password']
+    b_name = UserModel.check_name(user_name)
+    if b_name:
+        user = UserModel.getquery_name(user_name)
+        if check_password_hash(user.password, password):
+            access_token = create_access_token(identity=json.dumps(user, cls=MongoEncoder))
+
+            user_r = {
+                "name": user.username,
+                "surname": user.surname,
+                "email": user.email,
+                "password": user.password
+            }
+
+            return jsonify(user_r, access_token)
+
+    return {'message': 'Wrong username or password.'}, 401
+
+@puma.route("/register", methods = ['POST'] )
+def register_user():
+    data = request.json
+    username, email, surname, password, confirm = data['username'], data['email'], data['surname'], data['password'], data['confirm']
+
+    if UserModel.getquery_name(username) or UserModel.getquery_mail(email):
+        msg = {'message': 'Username or email has already been created, aborting.'}
+        return make_response(jsonify(msg), 200)
+
+    if password != confirm:
+        msg = {'message': 'Passwords does not match.'}
+        return make_response(jsonify(msg), 200)
+
+    user = UserModel(
+        username=username,
+        surname=surname,
+        email=email,
+        password=UserModel.hash_password(password)
+    )
+    user.save()
+    msg = {'message': 'User has been created successfully.'}
+    return make_response(jsonify(user, msg), 200)
+
+@jwt_required()
+@cross_origin(allow_headers=['Content-Type'])
+@puma.route("/edit", methods =['DELETE'])
+def delete():
+    user_id = str_to_dict(get_jwt_identity())['_id']['$oid']
+    UserModel.objects(id=user_id).delete()
     pass
 
 @puma.route("/historical_klines", methods=['POST', 'GET'])
@@ -165,6 +233,7 @@ def live_currencies_dashboard(symbol):
 
 
 @puma.route('/dashboard/portfolio', methods=['POST', 'GET'])
+@cross_origin(allow_headers=['Content-Type'])
 @jwt_required()
 def portfolio():
 
@@ -184,6 +253,8 @@ def portfolio():
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
+@cross_origin(allow_headers=['Content-Type'])
+@cross_origin()
 @jwt_required()
 def dash():
     data = request.json
@@ -222,6 +293,7 @@ def dash():
 
 
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
+@cross_origin(allow_headers=['Content-Type'])
 @jwt_required()
 def scripts():
     # users get queue data
@@ -248,6 +320,7 @@ def scripts():
    
 
 @puma.route('/scripts/<symbol>', methods=['POST', 'GET', 'PUT'])
+@cross_origin(allow_headers=['Content-Type'])
 @jwt_required()
 def execute_script(symbol):
 

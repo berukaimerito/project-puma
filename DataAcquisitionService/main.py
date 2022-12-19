@@ -1,5 +1,3 @@
-import requests
-
 from Services.event_loop_service import work as StartDbLoop
 from Services.event_loop_service import feed_queue as StartQueueLoop
 from fastapi import FastAPI, Request
