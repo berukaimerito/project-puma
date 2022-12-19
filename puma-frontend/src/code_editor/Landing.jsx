@@ -34,7 +34,7 @@ const Landing = () => {
   const [code, setCode] = useState(javascriptDefault)
   const [customInput, setCustomInput] = useState('')
   const [outputDetails, setOutputDetails] = useState(null)
-  const [processing, setProcessing] = useState(null)
+  const [processing, setProcessing] = useState(false)
   const [theme, setTheme] = useState('cobalt')
   const [currency, setCurrency] = useState(params.id ? params.id : 'BTCUSDT')
   const [language, setLanguage] = useState(languageOptions[0])
@@ -102,56 +102,55 @@ const Landing = () => {
   }, [])
 
   const saveCode = () => {
+    setProcessing(true)
     scriptService.saveScript(code, currency).then((data)=> {
       console.log(data)
+      setProcessing(false)
       navigate("/dashboard")
-   })
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
 
   const editCode = () => {
+    setProcessing(true)
+
     scriptService.editScript(currency, code).then((data)=> {
       console.log(data)
+      setProcessing(false)
+
       navigate("/dashboard")
-   })
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
 
   const handleRun = () => {
+    setProcessing(true)
+
     scriptService.runScript(currency).then((data)=> {
       console.log(data)
+      setProcessing(false)
+
       navigate("/dashboard")
-   })
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
 
   const handleStop = () => {
+    setProcessing(true)
+
     scriptService.stopScript(currency).then((data)=> {
       console.log(data)
+      setProcessing(false)
+
       navigate("/dashboard")
-   })
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
 
-  const showSuccessToast = (msg) => {
-    toast.success(msg || `Compiled Successfully!`, {
-      position: 'top-right',
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
-  }
-  const showErrorToast = (msg, timer) => {
-    toast.error(msg || `Something went wrong! Please try again.`, {
-      position: 'top-right',
-      autoClose: timer ? timer : 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
-  }
-  console.log(currency)
   return (
     <>
       <ToastContainer
@@ -191,14 +190,14 @@ const Landing = () => {
           <OutputWindow outputDetails={outputDetails} />
           <div className="flex flex-col items-end">
             <button style={{ color: 'green' }} onClick={handleRun} disabled={!code}>
-              {processing ? 'Processing...' : 'Run'}
+              {'Run'}
             </button>
             <button style={{ marginLeft: '10px', color: 'red' }} onClick={handleStop}>{'Stop'}</button>
           </div>
           {outputDetails && <OutputDetails outputDetails={outputDetails} />}
           <div style={{ marginTop: '10px' }}>
             <Button size="lg" variant="success" onClick={params.id ? editCode : saveCode}>
-              {params.id ? 'Save Changes' : 'Save Script'}
+              {params.id ? processing ? 'saving...' : 'Save Changes' : processing ? 'saving...' : 'Save Script'}
             </Button>
           </div>
         </Col>
