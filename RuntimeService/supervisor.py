@@ -1,6 +1,5 @@
 from dotenv import dotenv_values
 
-
 config = dotenv_values()
 
 from bot import Bot
