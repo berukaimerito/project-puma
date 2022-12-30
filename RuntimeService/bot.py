@@ -2,7 +2,7 @@ from abstractbot import Abc
 import requests
 import json
 
-config = dotenv_values()
+#config = dotenv_values()
 
 
 class Bot(Abc):
@@ -49,18 +49,6 @@ class Bot(Abc):
         self.profit = ((self.open_price - self.close_price) / self.close_price) * 100
         requests.post('http://127.0.0.1:5000/portfoliotracker',
                       json={'username': self.username, 'symbol': self.symbol, 'profit': self.profit})
-
-
-
-
-
-  
-    
-
-
-
-  
-
 
 
     def consume_interval_1(self,ch, method, properties, body):

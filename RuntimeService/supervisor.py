@@ -1,5 +1,4 @@
 from dotenv import dotenv_values
-
 config = dotenv_values()
 
 from bot import Bot
@@ -42,3 +41,4 @@ class Supervisor(metaclass=Singleton):
                                                      on_message_callback=bot.consume_interval_5)
 
                 bot.app.rabbit_channel.start_consuming()
+                

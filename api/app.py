@@ -219,7 +219,7 @@ def scripts():
         r = {'code': val}
         return jsonify(r)
 
-    if request.method == 'POST':
+    if request.method == 'POST': # POST /sciprts
          data = request.json
          symbol,script = data['symbol'],data['code']
          user_id = get_id(str_to_dict(get_jwt_identity()))
@@ -227,7 +227,8 @@ def scripts():
          data = {'userName': user.username,
             'symbol': symbol,
             }
-         with open(f"user_scripts/{user.username}.py", "w") as user_script:
+         requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False) # This line starts Data Acquisition thus it triggers Runtime Service as wells 
+         with open(f"user_scripts/{user.username}.py", "w") as user_script: 
             user_script.write(f"{script}")
             path = f"user_scripts/{user.username}.py"
 
@@ -241,16 +242,16 @@ def scripts():
  
 
 
-@puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
-@jwt_required()
-def run_script_start_rs_queues(symbol):
+# @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
+# @jwt_required()
+# def run_script_start_rs_queues(symbol):
 
-    if request.method == 'POST':
-            user_id = get_id(str_to_dict(get_jwt_identity()))
-            user = UserModel.getquery_id(user_id)
-            data = {'userName': user.username, 'symbol': symbol }
-            requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
-            return "script run successfully"
+#     if request.method == 'POST':
+#             user_id = get_id(str_to_dict(get_jwt_identity()))
+#             user = UserModel.getquery_id(user_id)
+#             data = {'userName': user.username, 'symbol': symbol }
+#             requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+#             return "script run successfully"
 
 @puma.route('/scripts-by/<symbol>', methods=['POST'])
 @cross_origin(origin='*')
