@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import Message from '../components/Message'
+import { register } from '../slices/auth'
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -14,23 +15,25 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState(null)
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  //   const userRegister = useSelector((state) => state.userRegister)
-  //   const { loading, error, userInfo } = userRegister
+  const { isLoggedIn, loading, user: currentUser } = useSelector((state) => state.auth)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // if (userInfo) {
-    //   //   history.push(redirect)
-    // }
-  }, [])
+    if (isLoggedIn && currentUser) {
+      navigate('/dashboard')
+    }
+  }, [isLoggedIn,navigate])
 
   const submitHandler = (e) => {
     e.preventDefault()
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
-      //   dispatch(register(name, email, password))
+        dispatch(register({name,surname, email, password, confirmPassword}))
+        navigate('/login')
     }
   }
 

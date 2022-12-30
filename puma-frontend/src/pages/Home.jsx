@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome } from '@fortawesome/free-solid-svg-icons'
 import Footer from '../components/Footer'
 import { useNavigate } from 'react-router'
-// import imgPath from '../images/homepage.jpg'
 
 const Home = () => {
   const dispatch = useDispatch()

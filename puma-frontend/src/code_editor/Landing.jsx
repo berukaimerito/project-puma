@@ -14,30 +14,27 @@ import ThemeDropdown from './ThemeDropdown'
 import LanguagesDropdown from './LanguagesDropdown'
 import { Button, Col, Row } from 'react-bootstrap'
 import CurrencyDropDown from './CurrencyDropDown'
-import { useParams } from 'react-router'
-import scriptService from '../services/mock/script.service'
+import { useNavigate, useParams } from 'react-router'
+import scriptService from '../services/script.service'
 
 const javascriptDefault = `/**
 * Default code.
 */
 
-
-const basicFunction = () => {
- return 2+2;
-};
-console.log(basicFunction());
 `
 
 const Landing = () => {
-  const [code, setCode] = useState(javascriptDefault)
+  const params = useParams()
+
+  const [code, setCode] = useState(params.id ? '' : javascriptDefault)
   const [customInput, setCustomInput] = useState('')
   const [outputDetails, setOutputDetails] = useState(null)
-  const [processing, setProcessing] = useState(null)
+  const [processing, setProcessing] = useState(false)
   const [theme, setTheme] = useState('cobalt')
-  const [currency, setCurrency] = useState('BTC')
+  const [currency, setCurrency] = useState(params.id ? params.id : 'BTCUSDT')
   const [language, setLanguage] = useState(languageOptions[0])
+  const navigate = useNavigate()
 
-  const params = useParams()
 
   const enterPress = useKeyPress('Enter')
   const ctrlPress = useKeyPress('Control')
@@ -51,9 +48,9 @@ const Landing = () => {
     if (enterPress && ctrlPress) {
       console.log('enterPress', enterPress)
       console.log('ctrlPress', ctrlPress)
-      handleCompile()
     }
   }, [ctrlPress, enterPress])
+
   const onChange = (action, data) => {
     switch (action) {
       case 'code': {
@@ -65,84 +62,7 @@ const Landing = () => {
       }
     }
   }
-  const handleCompile = () => {
-    setProcessing(true)
-    const formData = {
-      language_id: language.id,
-      // encode source code in base64
-      source_code: btoa(code),
-      stdin: btoa(customInput),
-    }
-    const options = {
-      method: 'POST',
-      url: 'https://judge0-ce.p.rapidapi.com/submissions',
-      params: { base64_encoded: 'true', fields: '*' },
-      headers: {
-        'content-type': 'application/json',
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-        'X-RapidAPI-Key': '8f5e0ceda6msh4b6c8b4f5ed2d33p15fe14jsne35df6a8539f',
-      },
-      data: formData,
-    }
-
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log('res.data', response.data)
-        const token = response.data.token
-        checkStatus(token)
-      })
-      .catch((err) => {
-        let error = err.response ? err.response.data : err
-        // get error status
-        let status = err.response.status
-        console.log('status', status)
-        if (status === 429) {
-          console.log('too many requests', status)
-
-          showErrorToast(`Quota of 100 requests exceeded`, 10000)
-        }
-        setProcessing(false)
-        console.log('catch block...', error)
-      })
-  }
-
-  const checkStatus = async (token) => {
-    const options = {
-      method: 'GET',
-      url: 'https://judge0-ce.p.rapidapi.com/submissions' + '/' + token,
-      params: { base64_encoded: 'true', fields: '*' },
-      headers: {
-        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com',
-        'X-RapidAPI-Key': '8f5e0ceda6msh4b6c8b4f5ed2d33p15fe14jsne35df6a8539f',
-      },
-    }
-    try {
-      let response = await axios.request(options)
-      let statusId = response.data.status?.id
-
-      // Processed - we have a result
-      if (statusId === 1 || statusId === 2) {
-        // still processing
-        setTimeout(() => {
-          checkStatus(token)
-        }, 2000)
-        return
-      } else {
-        setProcessing(false)
-        setOutputDetails(response.data)
-        showSuccessToast(`Compiled Successfully!`)
-        console.log('response.data', response.data)
-        return
-      }
-    } catch (err) {
-      console.log('err', err)
-      setProcessing(false)
-      showErrorToast()
-    }
-  }
-
+ 
   function handleThemeChange(th) {
     const theme = th
     console.log('theme...', theme)
@@ -155,7 +75,7 @@ const Landing = () => {
   }
 
   function handleCurrencyChange(crr) {
-    setCurrency(crr)
+    setCurrency(crr.value)
   }
 
   useEffect(() => {
@@ -167,34 +87,63 @@ const Landing = () => {
   useEffect(() => {
     if (params.id) {
       console.log('test11111')
-      const script = scriptService.getScriptById(params.id)
-      console.log(script)
-      setCode(script[0].code)
+      scriptService.getScriptById(params.id).then((data)=> {
+        console.log(data)
+        setCode(data.code)
+      })
+     
     }
     console.log(code)
   }, [])
 
-  const showSuccessToast = (msg) => {
-    toast.success(msg || `Compiled Successfully!`, {
-      position: 'top-right',
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
+  const saveCode = () => {
+    setProcessing(true)
+    scriptService.saveScript(code, currency).then((data)=> {
+      console.log(data)
+      setProcessing(false)
+      navigate("/dashboard")
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
-  const showErrorToast = (msg, timer) => {
-    toast.error(msg || `Something went wrong! Please try again.`, {
-      position: 'top-right',
-      autoClose: timer ? timer : 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
+
+  const editCode = () => {
+    setProcessing(true)
+
+    scriptService.editScript(currency, code).then((data)=> {
+      console.log(data)
+      setProcessing(false)
+
+      navigate("/dashboard")
+   }).catch(()=> {
+    setProcessing(false)
+  })
+  }
+
+  const handleRun = () => {
+    // setProcessing(true)
+
+    scriptService.runScript(currency).then((data)=> {
+      console.log(data)
+      // setProcessing(false)
+
+      navigate("/dashboard")
+   }).catch(()=> {
+    // setProcessing(false)
+  })
+  }
+
+  const handleStop = () => {
+    setProcessing(true)
+
+    scriptService.stopScript(currency).then((data)=> {
+      console.log(data)
+      setProcessing(false)
+
+      navigate("/dashboard")
+   }).catch(()=> {
+    setProcessing(false)
+  })
   }
 
   return (
@@ -219,7 +168,7 @@ const Landing = () => {
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </Col>
         <Col sm={2} className="px-4 py-2">
-          <CurrencyDropDown handleCurrencyChange={handleCurrencyChange} theme={theme} />
+          <CurrencyDropDown handleCurrencyChange={handleCurrencyChange} currencyId={params.id ? params.id : ""} theme={theme} />
         </Col>
       </Row>
       <Row>
@@ -235,15 +184,15 @@ const Landing = () => {
         <Col sm={4}>
           <OutputWindow outputDetails={outputDetails} />
           <div className="flex flex-col items-end">
-            <button style={{ color: 'green' }} onClick={handleCompile} disabled={!code}>
-              {processing ? 'Processing...' : 'Compile and Execute'}
+            <button style={{ color: 'green' }} onClick={handleRun} disabled={!code}>
+              {'Run'}
             </button>
-            <button style={{ marginLeft: '10px', color: 'red' }}>{'Stop'}</button>
+            <button style={{ marginLeft: '10px', color: 'red' }} onClick={handleStop}>{'Stop'}</button>
           </div>
           {outputDetails && <OutputDetails outputDetails={outputDetails} />}
           <div style={{ marginTop: '10px' }}>
-            <Button size="lg" variant="success">
-              {params.id ? 'Save Changes' : 'Save Script'}
+            <Button size="lg" variant="success" onClick={params.id ? editCode : saveCode}>
+              {params.id ? processing ? 'saving...' : 'Save Changes' : processing ? 'saving...' : 'Save Script'}
             </Button>
           </div>
         </Col>
