@@ -18,10 +18,11 @@ const Login = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (isLoggedIn && currentUser) {
+    if (isLoggedIn && currentUser.name) {
       navigate('/dashboard')
       // reload()
     }
+    
   }, [isLoggedIn,navigate])
 
   const submitHandler = (e) => {
