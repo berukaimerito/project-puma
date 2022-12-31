@@ -123,7 +123,7 @@ const Landing = () => {
   const handleRun = () => {
     // setProcessing(true)
 
-    scriptService.runScript(currency).then((data)=> {
+    scriptService.runScript(currency, code).then((data)=> {
       console.log(data)
       // setProcessing(false)
 

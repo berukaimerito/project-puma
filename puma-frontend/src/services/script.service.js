@@ -83,10 +83,10 @@ const deleteById = async (symbol) => {
   });
 };
 
-const runScript = async (symbol) => {
+const runScript = async (symbol, code) => {
   return axios({
     method: "post",
-    url: API_URL + "scripts/" + symbol + "/run",
+    url: API_URL + "scripts",
     headers: {
       "Content-Type": "application/json",
       "X-API-KEY": "XXX",
@@ -94,7 +94,10 @@ const runScript = async (symbol) => {
       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       Authorization: authHeader().Authorization,
     },
-    data: {},
+    data: {
+      symbol,
+      code,
+    },
   }).then((response) => {
     console.log(response.data);
     return response.data;

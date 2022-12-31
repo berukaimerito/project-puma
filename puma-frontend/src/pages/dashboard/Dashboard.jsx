@@ -38,14 +38,13 @@ const Dashboard = () => {
   const [scripts, setScripts] = useState([])
   const [increment, setIncrement] = useState(1000)
   
-  let date = 5000
+  let newData;
 
-  // binance ws api
-  var binanceSocket = new WebSocket(
-    `wss://stream.binance.com:9443/ws/${currency}@kline_${interval}m`
-  )
+  
     
   useEffect(() => {
+    var timer = null;
+
     scriptService.getAllScripts().then((response)=> {
       let res = {
         msg: response
@@ -53,35 +52,45 @@ const Dashboard = () => {
       setScripts(res.msg === 'No scripts' ? [] : response)
     })
 
+    // binance ws api
+    var binanceSocket = new WebSocket(
+      `wss://stream.binance.com:9443/ws/${currency}@kline_${interval}m`
+    )
 
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {
       setCandlestickSeries(data)
     })
 
-  
     binanceSocket.onmessage = function (event) {
       var message = JSON.parse(event.data)
   
       var candlestick = message.k
-      date = date + 1200
-      console.log(date)
   
-        var newData = {
-          time: candlestick.t / 1000,
-          open: candlestick.o,
-          high: candlestick.h,
-          low: candlestick.l,
-          close: candlestick.c,
-        }
-        console.log(newData)
-        console.log(candlestickSeries)
-        setCandlestickSeries(newData)
-     
+      newData = {
+        time: candlestick.T,
+        open: candlestick.o,
+        high: candlestick.h,
+        low: candlestick.l,
+        close: candlestick.c,
+      }
+      console.log(newData)
+      console.log(candlestickSeries)
+    
+
     }
-  
+
+    timer = setInterval(() => {
+      console.log("time interval works")
+      // TODO: find solution to wait for more then one time
+      setCandlestickSeries(current => [...current, newData])
+      clearTimeout()
+    }, 70000);
 
     return () => {
-      binanceSocket.close()
+      if (timer) {
+        clearInterval(timer); //cancel the previous timer.
+        timer = null;
+    }
     }
   }, [currency, interval])
 
