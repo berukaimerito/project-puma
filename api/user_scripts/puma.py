@@ -1,5 +1,1 @@
-/**
-* Default code.
-*/
-
-fun()
+fun(x)

@@ -162,7 +162,7 @@ def edit():
 
     if request.method == 'PUT' and new_pswd:
         user.edit_user_pswd(new_name)
-        user.save()
+        user.save() 
         return jsonify(user)
 
 
