@@ -1,11 +1,9 @@
 import authHeader from "./authHeader";
 import axios from "axios";
 
-
 const API_URL = "http://localhost:5000/"; // backend api
 
-
-//TODO 
+//TODO
 // PROPER WAY TO GET WS STREAM
 
 // var binanceSocket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@kline_1m");
@@ -14,8 +12,6 @@ const API_URL = "http://localhost:5000/"; // backend api
 // 	var message = JSON.parse(event.data);
 
 // 	var candlestick = message.k;
-
-// 	console.log(candlestick)
 
 // 	candleSeries.update({
 // 		time: candlestick.t / 1000,
@@ -34,7 +30,6 @@ const getHistoricalData = async (symbol, interval) => {
       { headers: authHeader() }
     )
     .then((response) => {
-      //   console.log(response.data);
       return response.data;
     });
 };

@@ -11,7 +11,6 @@ const options = {
     tickMarkFormatter: (time) => {
       const date = new Date(time.year, time.month, time.day)
       const formattedTick = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
-      console.log({ formattedTick })
       return formattedTick
     },
   },

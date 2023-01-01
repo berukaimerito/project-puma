@@ -18,7 +18,6 @@ export const register = createAsyncThunk(
       return response.data;
     } catch (error) {
       // const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
-      console.log(error);
       return thunkAPI.rejectWithValue();
     }
   }
@@ -29,7 +28,6 @@ export const login = createAsyncThunk(
   async ({ email, password }, thunkAPI) => {
     try {
       const data = await authService.login(email, password);
-      console.log(data);
       return { user: data };
     } catch (error) {
       return thunkAPI.rejectWithValue();

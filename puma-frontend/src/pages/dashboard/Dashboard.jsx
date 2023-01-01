@@ -11,7 +11,7 @@ const Dashboard = () => {
     alignLabels: true,
     timeScale: {
       rightOffset: 12,
-      barSpacing: 3,
+      barSpacing: 5,
       fixLeftEdge: true,
       lockVisibleTimeRangeOnResize: true,
       rightBarStaysOnScroll: true,
@@ -36,70 +36,64 @@ const Dashboard = () => {
   const [currency, setCurrency] = useState('btcusdt')
   const [interval, setInterval] = useState('1')
   const [scripts, setScripts] = useState([])
-  const [increment, setIncrement] = useState(1000)
   
   let newData;
+  var timeoutInterval = 0;
 
-  
-    
+   // binance ws api
+   var binanceSocket = new WebSocket(
+    `wss://stream.binance.com:9443/ws/${currency}@kline_${interval}m`
+  )
+
+  binanceSocket.onmessage = function (event) {
+    var message = JSON.parse(event.data)
+
+    var candlestick = message.k
+
+    newData = {
+      time: candlestick.t / 1000,
+      open: candlestick.o,
+      high: candlestick.h,
+      low: candlestick.l,
+      close: candlestick.c,
+    }
+  }
+
   useEffect(() => {
-    var timer = null;
-
     scriptService.getAllScripts().then((response)=> {
       let res = {
         msg: response
       }
       setScripts(res.msg === 'No scripts' ? [] : response)
     })
-
-    // binance ws api
-    var binanceSocket = new WebSocket(
-      `wss://stream.binance.com:9443/ws/${currency}@kline_${interval}m`
-    )
+  }, [])
+  
+    
+  useEffect(() => {
 
     binanceService.getHistoricalData(currency, `${interval}m`).then((data) => {
       setCandlestickSeries(data)
     })
+   
+    const timer = setTimeout(() => {
+      const lastElem = candlestickSeries.slice(-1)
+      lastElem.time < newData.time && setCandlestickSeries(current => [...current, newData])
+    }, timeoutInterval);
 
-    binanceSocket.onmessage = function (event) {
-      var message = JSON.parse(event.data)
-  
-      var candlestick = message.k
-  
-      newData = {
-        time: candlestick.T,
-        open: candlestick.o,
-        high: candlestick.h,
-        low: candlestick.l,
-        close: candlestick.c,
-      }
-      console.log(newData)
-      console.log(candlestickSeries)
-    
-
+    return () => { 
+      clearTimeout(timer)
     }
-
-    timer = setInterval(() => {
-      console.log("time interval works")
-      // TODO: find solution to wait for more then one time
-      setCandlestickSeries(current => [...current, newData])
-      clearTimeout()
-    }, 70000);
-
-    return () => {
-      if (timer) {
-        clearInterval(timer); //cancel the previous timer.
-        timer = null;
-    }
-    }
-  }, [currency, interval])
-
- 
-
-
+  }, [currency, interval, candlestickSeries])
 
   const selectInterval = (e) => {
     setInterval(e)
+    if (interval == '1') {
+      timeoutInterval = 60000;
+    }else if (interval == '5') {
+      timeoutInterval = 300000;
+    }else if (interval == '15') {
+      timeoutInterval = 900000;
+    }
   }
 
   const selectCurrency = (e) => {
@@ -142,6 +136,7 @@ const Dashboard = () => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu variant="dark">
+                      <Dropdown.Item eventKey="1">1 min</Dropdown.Item>
                       <Dropdown.Item eventKey="5">5 min</Dropdown.Item>
                       {/* <Dropdown.Item eventKey="10">10 min</Dropdown.Item> */}
                       <Dropdown.Item eventKey="15">15 min</Dropdown.Item>

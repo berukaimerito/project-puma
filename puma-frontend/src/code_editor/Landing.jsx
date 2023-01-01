@@ -40,7 +40,6 @@ const Landing = () => {
   const ctrlPress = useKeyPress('Control')
 
   const onSelectChange = (sl) => {
-    console.log('selected Option...', sl)
     setLanguage(sl)
   }
 
@@ -65,8 +64,6 @@ const Landing = () => {
  
   function handleThemeChange(th) {
     const theme = th
-    console.log('theme...', theme)
-
     if (['light', 'vs-dark'].includes(theme.value)) {
       setTheme(theme)
     } else {
@@ -86,20 +83,16 @@ const Landing = () => {
 
   useEffect(() => {
     if (params.id) {
-      console.log('test11111')
       scriptService.getScriptById(params.id).then((data)=> {
-        console.log(data)
         setCode(data.code)
       })
      
     }
-    console.log(code)
   }, [])
 
   const saveCode = () => {
     setProcessing(true)
     scriptService.saveScript(code, currency).then((data)=> {
-      console.log(data)
       setProcessing(false)
       navigate("/dashboard")
    }).catch(()=> {
@@ -111,7 +104,6 @@ const Landing = () => {
     setProcessing(true)
 
     scriptService.editScript(currency, code).then((data)=> {
-      console.log(data)
       setProcessing(false)
 
       navigate("/dashboard")
@@ -124,7 +116,6 @@ const Landing = () => {
     // setProcessing(true)
 
     scriptService.runScript(currency, code).then((data)=> {
-      console.log(data)
       // setProcessing(false)
 
       navigate("/dashboard")
@@ -137,7 +128,6 @@ const Landing = () => {
     setProcessing(true)
 
     scriptService.stopScript(currency).then((data)=> {
-      console.log(data)
       setProcessing(false)
 
       navigate("/dashboard")

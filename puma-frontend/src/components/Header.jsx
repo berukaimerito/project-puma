@@ -11,10 +11,7 @@ import {faUser} from '@fortawesome/free-solid-svg-icons'
 
 const Header = () => {
   const { user: currentUser } = useSelector((state) => state.auth)
-  console.log(currentUser)
-
   const dispatch = useDispatch()
-
   const navigate = useNavigate()
 
   const logoutHandler = () => {

@@ -3,18 +3,14 @@ import { Button, Card, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router'
 import scriptService from '../services/script.service'
 
-function ScriptList({ scripts, setScripts }) {
-  console.log(scripts) 
-  
+function ScriptList({ scripts, setScripts }) {  
   const navigate = useNavigate()
-
   const handleUse = (id) => {
     navigate(`/scripts/${id}`)
   }
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this script?')) {
-      console.log('delete')
       scriptService.deleteById(id).then((data)=> console.log(data))
       setScripts(scripts.filter(sc => sc.symbol !== id))
     }

@@ -20,7 +20,6 @@ const saveScript = async (code, symbol) => {
       }
     )
     .then((response) => {
-      console.log(response.data);
       return response.data;
     });
 };
@@ -42,7 +41,6 @@ const editScript = async (symbol, code) => {
       }
     )
     .then((response) => {
-      console.log(response.data);
       return response.data;
     });
 };
@@ -60,7 +58,6 @@ const getScriptById = async (symbol) => {
     data: {},
     withCredentials: false,
   }).then((response) => {
-    console.log(response.data);
     return response.data;
   });
 };
@@ -78,7 +75,6 @@ const deleteById = async (symbol) => {
     },
     data: { symbol },
   }).then((response) => {
-    console.log(response.data);
     return response.data;
   });
 };
@@ -99,7 +95,6 @@ const runScript = async (symbol, code) => {
       code,
     },
   }).then((response) => {
-    console.log(response.data);
     return response.data;
   });
 };
@@ -108,7 +103,6 @@ const stopScript = async (symbol) => {
   return axios
     .post(API_URL + "scripts/" + symbol + "/stop")
     .then((response) => {
-      console.log(response.data);
       return response.data;
     });
 };
@@ -117,7 +111,6 @@ const getAllScripts = async () => {
   return axios
     .post(API_URL + "dashboard", {}, { headers: authHeader() })
     .then((response) => {
-      console.log(response.data);
       return response.data;
     });
 };

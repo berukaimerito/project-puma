@@ -1,9 +1,9 @@
 // MOCK DATA
 let scripts = [
   {
-    _id: '1',
-    currency: 'BTC',
-    path: 'images/btc.jpeg',
+    _id: "1",
+    currency: "BTC",
+    path: "images/btc.jpeg",
     code: `/**
     * Default code.
     */
@@ -15,13 +15,12 @@ let scripts = [
     
     const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const target = 5;
-    console.log(basicFunction());
     `,
   },
   {
-    _id: '2',
-    currency: 'ETH',
-    path: 'images/eth.jpeg',
+    _id: "2",
+    currency: "ETH",
+    path: "images/eth.jpeg",
     code: `/**
     * Default code.
     */
@@ -33,39 +32,37 @@ let scripts = [
     
     const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const target = 5;
-    console.log(basicFunction());
     `,
   },
-]
+];
 
-const API_URI = 'localhost:5000/users' // backend api
+const API_URI = "localhost:5000/users"; // backend api
 
-const saveScript = (username, email, password) => {}
+const saveScript = (username, email, password) => {};
 
 const getScriptById = (id) => {
-  console.log(id)
-  let scriptObj
-  scriptObj = scripts.filter((script) => script._id === id)
+  let scriptObj;
+  scriptObj = scripts.filter((script) => script._id === id);
 
-  return scriptObj
-}
+  return scriptObj;
+};
 
 const deleteById = (id) => {
-  let scriptObjs
-  scriptObjs = scripts.filter((script) => script._id !== id)
+  let scriptObjs;
+  scriptObjs = scripts.filter((script) => script._id !== id);
 
-  return scriptObjs
-}
+  return scriptObjs;
+};
 
 const getAllScripts = (id) => {
-  return scripts
-}
+  return scripts;
+};
 
 const scriptService = {
   getScriptById,
   saveScript,
   getAllScripts,
   deleteById,
-}
+};
 
-export default scriptService
+export default scriptService;

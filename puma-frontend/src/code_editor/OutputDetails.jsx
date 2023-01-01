@@ -1,7 +1,6 @@
 import React from 'react'
 
 const OutputDetails = ({ outputDetails }) => {
-  console.log(outputDetails)
   return (
     <div style={{ marginTop: '20px' }}>
       <p>

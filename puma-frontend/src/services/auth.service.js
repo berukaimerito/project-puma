@@ -3,7 +3,6 @@ import axios from "axios";
 const API_URL = "http://localhost:5000/"; // backend api
 
 const register = async (name, surname, email, password, confirmPassword) => {
-  console.log(name, surname, email, password, confirmPassword);
   return axios
     .post(API_URL + "register", {
       username: name,
@@ -13,13 +12,11 @@ const register = async (name, surname, email, password, confirmPassword) => {
       confirm: confirmPassword,
     })
     .then((response) => {
-      console.log(response);
       return response.data;
     });
 };
 
 const login = async (username, password) => {
-  console.log(username);
   return axios
     .post(API_URL + "login", {
       username: username,
