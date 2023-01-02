@@ -15,7 +15,10 @@ class UserModel(Document):
     password = StringField(required=False)
     portfolio = ListField(EmbeddedDocumentField(PortfolioModel))
     scripts = ListField(EmbeddedDocumentField(ScriptModel))
-    
+
+
+
+
     
     def edit_user_pswd(self, pswd):
         new_pswd = generate_password_hash(pswd)
@@ -54,6 +57,18 @@ class UserModel(Document):
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
                 return script.pyscript
+
+
+    def check_scripts(self,symbol):
+        for script in self.scripts:
+            if str(script.symbol) == str(symbol):
+                return False
+        return True
+
+
+
+
+
 
     def edit_script(self, symbol,pyscript):
 
