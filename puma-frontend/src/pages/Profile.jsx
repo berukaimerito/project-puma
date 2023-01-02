@@ -4,6 +4,11 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import Message from '../components/Message'
+import authService from '../services/auth.service'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const reload = () => window.location.reload()
 
 const Register = () => {
   const { isLoggedIn, loading, user: currentUser } = useSelector((state) => state.auth)
@@ -32,7 +37,10 @@ const Register = () => {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
-      //   dispatch(register(name, email, password))
+      authService.editProfile(name,password).then(data=>{
+        console.log(data)
+        toast("Profile Edited!")
+      })
     }
   }
 
@@ -98,8 +106,9 @@ const Register = () => {
         </Button>
         </div>
       </Form>
-
+      <ToastContainer />
     </FormContainer>
+    
   )
 }
 

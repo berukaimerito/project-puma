@@ -2,6 +2,17 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/"; // backend api
 
+const editProfile = async (name, password) => {
+  return axios
+    .put(API_URL + "profile", {
+      username: name,
+      password,
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
 const register = async (name, surname, email, password, confirmPassword) => {
   return axios
     .post(API_URL + "register", {
@@ -50,6 +61,7 @@ const authService = {
   register,
   login,
   logout,
+  editProfile,
 };
 
 export default authService;

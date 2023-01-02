@@ -4,6 +4,8 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import { login } from '../slices/auth'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const reload = () => window.location.reload()
 
@@ -67,6 +69,8 @@ const Login = () => {
           New Customer? <Link to={'/register'}>Register</Link>
         </Col>
       </Row>
+      <ToastContainer />
+
     </FormContainer>
   )
 }

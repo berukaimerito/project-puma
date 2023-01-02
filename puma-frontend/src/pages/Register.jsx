@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import Message from '../components/Message'
 import { register } from '../slices/auth'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -107,6 +109,8 @@ const Register = () => {
           Have an account? <Link to="/login">Login</Link>
         </Col>
       </Row>
+      <ToastContainer />
+
     </FormContainer>
   )
 }
