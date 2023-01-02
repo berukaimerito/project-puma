@@ -86,6 +86,6 @@ class Bot(Abc):
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    #
+    
     # def __str__(self):
     #     return f'{self.username},{self.symbol}'

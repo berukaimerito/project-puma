@@ -4,7 +4,6 @@ from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
 from Models.QueueModel import Queue
-
 from Services.queue_service import UserQueue
 
 router = APIRouter()
@@ -18,7 +17,8 @@ def create_queue(request: Request, queue: Queue = Body(...)):
     
     user_queue = UserQueue(queue.userName, queue.symbol)
     user_list.append(user_queue)
-    time.sleep(5)
+    time.sleep(2)
+    print(user_queue.user_name,user_queue.symbol)
     queue_json = jsonable_encoder(queue)
     result = user_queue.start_feeding(user_queue)
 
