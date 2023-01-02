@@ -82,7 +82,7 @@ const deleteById = async (symbol) => {
 const runScript = async (symbol, code) => {
   return axios({
     method: "post",
-    url: API_URL + "scripts",
+    url: API_URL + "scripts/" + symbol + "/run",
     headers: {
       "Content-Type": "application/json",
       "X-API-KEY": "XXX",
