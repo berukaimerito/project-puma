@@ -13,8 +13,5 @@ class Abc(abc.ABC):
     def check(self):
         pass
 
-   
-
-
-
     def on_price_change(cls, ts, price): None
+

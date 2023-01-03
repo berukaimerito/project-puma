@@ -2,7 +2,8 @@ from abstractbot import Abc
 import requests
 import json
 
-#config = dotenv_values()
+
+# config = dotenv_values()
 
 
 class Bot(Abc):
@@ -42,6 +43,7 @@ class Bot(Abc):
             self.sell(ts, price)
             self.calculate_closed_script()
             # self.close_channels()
+
     # def calculate_current_percentage(self):
     #     self.profit
 
@@ -50,42 +52,47 @@ class Bot(Abc):
         requests.post('http://127.0.0.1:5000/portfoliotracker',
                       json={'username': self.username, 'symbol': self.symbol, 'profit': self.profit})
 
+    def byte_to_dictionary(self, str):
+        data = json.loads(str)
+        data['CandleStick'], data['Ticker'] = json.loads(data['CandleStick']), json.loads(data['Ticker'])
+        self.data = data
+        return self.data
 
-    def consume_interval_1(self,ch, method, properties, body):
-        dic = Bot.byte_to_dictionary(body.decode())
-        #self.on_price_change(dic)
-        print(body.decode())
+    def consume_interval_1(self, ch, method, properties, body):
+        self.ch = ch
+        data = self.byte_to_dictionary(body.decode())
+        self.on_price_change(data, str(data['CandleStick']['timestamp']['$date']), float(data['CandleStick']['close']))
         print(" [x] Done")
+        # ch.close()
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-
-    def consume_interval_2(self,ch, method, properties, body):
-        dic = Bot.byte_to_dictionary(body.decode())
+    def consume_interval_2(self, ch, method, properties, body):
+        self.ch = ch
+        dic = self.byte_to_dictionary(body.decode())
         # Bot.on_price_change(dic)
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-
-    def consume_interval_3(self,ch, method, properties, body):
-        dic = Bot.byte_to_dictionary(body.decode())
+    def consume_interval_3(self, ch, method, properties, body):
+        self.ch = ch
+        dic = self.byte_to_dictionary(body.decode())
         # Bot.on_price_change(dic)
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-
-    def consume_interval_4(self,ch, method, properties, body):
-        dic = Bot.byte_to_dictionary(body.decode())
+    def consume_interval_4(self, ch, method, properties, body):
+        self.ch = ch
+        dic = self.byte_to_dictionary(body.decode())
         # Bot.on_price_change(dic)
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-
-    def consume_interval_5(self,ch, method, properties, body):
-        dic = Bot.byte_to_dictionary(body.decode())
+    def consume_interval_5(self, ch, method, properties, body):
+        self.ch = ch
+        dic = self.byte_to_dictionary(body.decode())
         # Bot.on_price_change(dic)
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    
     # def __str__(self):
     #     return f'{self.username},{self.symbol}'
