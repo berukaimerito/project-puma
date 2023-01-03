@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import authService from '../services/auth.service'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { login } from '../slices/auth'
 
 const reload = () => window.location.reload()
 
@@ -40,6 +41,8 @@ const Register = () => {
       authService.editProfile(name,password).then(data=>{
         console.log(data)
         toast("Profile Edited!")
+        dispatch(login({name,password}))
+        reload()
       })
     }
   }

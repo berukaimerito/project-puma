@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import CodeEditorWindow from './CodeEditorWindow'
-import axios from 'axios'
 import { languages as languageOptions } from '../constants/languages'
 
 import { ToastContainer, toast } from 'react-toastify'
@@ -94,7 +93,10 @@ const Landing = () => {
     setProcessing(true)
     scriptService.saveScript(code, currency).then((data)=> {
       setProcessing(false)
-      navigate("/dashboard")
+      toast("Code was successfully saved")
+      setTimeout(()=> {     
+         navigate("/dashboard")
+      },1000)
    }).catch(()=> {
     setProcessing(false)
   })
@@ -105,8 +107,11 @@ const Landing = () => {
 
     scriptService.editScript(currency, code).then((data)=> {
       setProcessing(false)
-
-      navigate("/dashboard")
+  
+      toast("Changes were successfully saved")
+      setTimeout(()=> {     
+         navigate("/dashboard")
+      },1000)
    }).catch(()=> {
     setProcessing(false)
   })
@@ -117,8 +122,7 @@ const Landing = () => {
 
     scriptService.runScript(currency, code).then((data)=> {
       // setProcessing(false)
-
-      navigate("/dashboard")
+      toast("Code was run successfully")
    }).catch(()=> {
     // setProcessing(false)
   })
@@ -130,7 +134,8 @@ const Landing = () => {
     scriptService.stopScript(currency).then((data)=> {
       setProcessing(false)
 
-      navigate("/dashboard")
+      toast("Code was stopped successfully")
+
    }).catch(()=> {
     setProcessing(false)
   })

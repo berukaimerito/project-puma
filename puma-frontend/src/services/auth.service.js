@@ -1,13 +1,18 @@
 import axios from "axios";
+import authHeader from "./authHeader";
 
 const API_URL = "http://localhost:5000/"; // backend api
 
 const editProfile = async (name, password) => {
   return axios
-    .put(API_URL + "profile", {
-      username: name,
-      password,
-    })
+    .put(
+      API_URL + "profile",
+      {
+        username: name,
+        password,
+      },
+      { headers: authHeader() }
+    )
     .then((response) => {
       return response.data;
     });

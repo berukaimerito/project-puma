@@ -35,7 +35,10 @@ const Register = () => {
       setMessage('Passwords do not match')
     } else {
         dispatch(register({name,surname, email, password, confirmPassword}))
-        navigate('/login')
+        toast("You successfully registered. Now login please!")
+        setTimeout(()=> {     
+          navigate("/login")
+        },2000)
     }
   }
 

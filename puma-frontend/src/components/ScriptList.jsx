@@ -2,6 +2,8 @@ import React, { useEffect } from 'react'
 import { Button, Card, Col, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router'
 import scriptService from '../services/script.service'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function ScriptList({ scripts, setScripts }) {  
   const navigate = useNavigate()
@@ -13,11 +15,23 @@ function ScriptList({ scripts, setScripts }) {
     if (window.confirm('Are you sure you want to delete this script?')) {
       scriptService.deleteById(id).then((data)=> console.log(data))
       setScripts(scripts.filter(sc => sc.symbol !== id))
+      toast("Script was deleted sucessully")
     }
   }
 
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {scripts.length === 0 ? (
         <p>No scripts</p>
       ) : (
