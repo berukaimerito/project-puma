@@ -193,6 +193,9 @@ def portfolio():
     return jsonify(user)
 
 
+import os
+
+
 @puma.route('/scripts', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 @cross_origin(origin='*', headers=['Content- Type', 'Authorization'])
@@ -205,10 +208,8 @@ def scripts():
         data = request.json
         symbol, script = data['symbol'], data['code']
         if user.check_scripts(symbol):
-            data = {'userName': user.username,
-                    'symbol': symbol,
-                    }
-            with open(f"user_scripts/{user.username}.py", "w") as user_script:
+
+            with open(f"user_scripts/{user.username}_{symbol}.py", "w") as user_script:
                 user_script.write(f"{script}")
                 path = f"user_scripts/{user.username}.py"
 
@@ -217,26 +218,24 @@ def scripts():
             r = {'symbol': symbol, 'code': script}
             return make_response(jsonify(r))
 
-        # return jsonify('')
-
-
 
 @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 @cross_origin(origin='*', headers=['Content- Type', 'Authorization'])
-
 def script_run(symbol):
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     data = {'userName': user.username,
             'symbol': symbol,
             }
+    #################################### guncel coin deger  ###########
+
+
+
+
     requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
 
     return make_response(jsonify('deneme'))
-
-
-
 
 
 # @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])

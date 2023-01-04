@@ -1,11 +1,7 @@
 from abstractbot import Abc
 import requests
 import json
-
-
 # config = dotenv_values()
-
-
 class Bot(Abc):
     timestamp = ''
 
@@ -36,10 +32,13 @@ class Bot(Abc):
         print('buy ici')
 
     def on_price_change(self, data, ts, price):
-        print((price))
-        if price > 0.4 and not self.on_going:
+        print(type(price))
+
+        if price > 0.2 and not self.on_going:
             self.buy(ts, price)
-        if self.on_going and price > 0.4:
+            print('buyladim')
+        if self.on_going and price > 0.2:
+            print(31)
             self.sell(ts, price)
             self.calculate_closed_script()
             # self.close_channels()
@@ -94,5 +93,3 @@ class Bot(Abc):
         print(" [x] Done")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    # def __str__(self):
-    #     return f'{self.username},{self.symbol}'

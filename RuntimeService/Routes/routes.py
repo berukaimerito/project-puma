@@ -6,22 +6,31 @@ import threading
 import asyncio
 from Models.UserModel import User
 from rabbit import Rabbit
-
+from dotenv import dotenv_values
 from bot import Bot
 from supervisor import Supervisor
 
+config = dotenv_values()
 
 router = APIRouter()
+
+import importlib
 
 
 @router.post("/start_live_transfer", response_description="Create a new Queue", status_code=status.HTTP_201_CREATED)
 def start_live_data(request: Request, user: User = Body(...)):
-
     conn = Rabbit()
     supervisor = Supervisor()
 
-    #########BO
-    bot = Bot(username=user.userName, symbol=user.symbol, app=conn)
+    path = "C:\\Users\\kaankk5\\Desktop\\mallik\\project-puma\\api\\user_scripts\\"+f'{user.userName}-{user.symbol}.py'
+
+    imodule = importlib.machinery.SourceFileLoader('module',
+                                                   f'C:\\Users\\kaankk5\\Desktop\\mallik\\project-puma\\api\\user_scripts\\{user.userName}_{user.symbol}.py').load_module()
+
+    bot = imodule.Bot(username=user.userName, symbol=user.symbol, app=conn)
+
+
+    # bot = Bot(username=user.userName, symbol=user.symbol, app=conn)
     supervisor.supervisor_bot_list.append(bot)
     time.sleep(5)
     # if bot:
@@ -29,7 +38,6 @@ def start_live_data(request: Request, user: User = Body(...)):
     thread.setName(user.userName + "_" + "consumer_thread")
     thread.setDaemon(True)
     thread.start()
-
 
     user_json = jsonable_encoder(user)
     result = user_json
