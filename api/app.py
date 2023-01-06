@@ -180,15 +180,26 @@ def dash():
     return jsonify(response)
 
 
+@puma.route('/portfoliotracker', methods=['POST'])
+def portfolio_update():
+    data = request.json
+    user = UserModel.getquery_name(data['username'])
+    user.add_portfolio(data['symbol'],data['Open price'],data['Open ts'])
+    user.save()
+    return jsonify(data)
+
+
+
+
 @puma.route('/dashboard/portfolio', methods=['GET'])
 @jwt_required()
 def portfolio():
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
-    port = []
+    port= []
     if request.method == 'GET':
-        for script in user.scripts:
-            port.append({script.symbol, script.profit})
+        for item in user.portfolio:
+            port.append({item.symbol,item.buy_price,item.open_timestamp})
         return jsonify(port)
     return jsonify(user)
 

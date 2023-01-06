@@ -38,8 +38,8 @@ class UserModel(Document):
         return True
         
 
-    def add_portfolio(self, symbol):
-        self.portfolio.append((PortfolioModel(symbol=symbol)))
+    def add_portfolio(self, symbol,open_price,timestamp):
+        self.portfolio.append((PortfolioModel(symbol=symbol,buy_price=open_price,open_timestamp=timestamp)))
 
     def add_script(self, symbol, pyscript, path):
         self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, path=path)))

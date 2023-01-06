@@ -1,14 +1,12 @@
 from mongoengine import *
 
 def add_new_candle_stick(app, candle_stick):
-    print("inserted CandleStick")
     add_new_candle_stick = app.database["CandleStick"].insert_one(candle_stick)
     created_candle_stick_id = add_new_candle_stick.inserted_id
 
     return created_candle_stick_id
 
 def add_new_ticker(app, ticker):
-    print("inserted Ticker")
     add_new_ticker = app.database["Ticker"].insert_one(ticker)
     created_ticker_id = add_new_ticker.inserted_id
     return created_ticker_id

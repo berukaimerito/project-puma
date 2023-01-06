@@ -107,7 +107,7 @@ def save_candle_stick_and_ticker(app, candleSticks, symbol, interval, is_queue=F
         if not is_queue:
             # print("Saving...")
             ticker_id = db_service.get_ticker_id(app, interval, symbol)
-            print(ticker_id)
+
         if ticker_id == None:
             ticker_id = SaveTicker(app, tickerModel.to_mongo())
 

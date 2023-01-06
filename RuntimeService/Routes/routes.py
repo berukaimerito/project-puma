@@ -28,6 +28,7 @@ def start_live_data(request: Request, user: User = Body(...)):
                                                    f'C:\\Users\\kaankk5\\Desktop\\mallik\\project-puma\\api\\user_scripts\\{user.userName}_{user.symbol}.py').load_module()
 
     bot = imodule.Bot(username=user.userName, symbol=user.symbol, app=conn)
+    print(type(bot))
 
 
     # bot = Bot(username=user.userName, symbol=user.symbol, app=conn)
