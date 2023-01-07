@@ -164,10 +164,10 @@ def default_chart():
     data = request.json
     symbol = data['symbol']
     interval = data['interval']
-    return jsonify('')
-    # return get_historical_kline(symbol, interval)
 
+    return get_historical_kline(symbol, interval)
 
+import os
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
 @cross_origin(origin='*', headers=['Content- Type', 'Authorization'])
 @jwt_required()
@@ -181,7 +181,7 @@ def dash():
     if request.method == 'DELETE':
         symbol = data['symbol']
         user.delete_script(symbol)
-
+        # os.remove(f"user_scripts/{user.username}_{symbol}.py")
 
     return jsonify(response)
 
