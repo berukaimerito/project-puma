@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table'
 import Chart from '@qognicafinance/react-lightweight-charts'
+import io from 'socket.io-client';
+import portfolioService from '../services/portfolio.service';
+
 
 const options = {
   timeScale: {
@@ -12,6 +16,21 @@ const options = {
 }
 
 function PortfolioTable({ currencies }) {
+
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = io(`http://localhost:5000`);
+    setSocket(newSocket);
+
+    portfolioService.getPortfolioById().then(data => {
+      console.log(data)
+    }).catch(err=>{
+      console.log(err)
+    })
+    return () => newSocket.close();
+  }, [setSocket]);
+  
   return (
     <Table bordered hover>
       <thead>
