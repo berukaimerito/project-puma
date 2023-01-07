@@ -1,5 +1,5 @@
 from mongoengine import EmbeddedDocument
-from mongoengine import StringField, IntField, FloatField, DateTimeField
+from mongoengine import StringField, IntField, FloatField, DateTimeField,BooleanField
 from flask import jsonify, json
 
 
@@ -10,5 +10,6 @@ class PortfolioModel(EmbeddedDocument):
     sell_price = FloatField()
     open_timestamp = StringField()
     close_timestamp = StringField()
+    on_going = BooleanField()
     def __repr__(self):
         return f'symbol:{self.symbol} amount:{self.amount}'
