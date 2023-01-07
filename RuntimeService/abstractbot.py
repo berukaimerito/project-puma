@@ -87,7 +87,7 @@ class Abc(abc.ABC):
             cls.script_close_price = cls.close
             cls.script_close_timestamp = cls.timestamp
             cls.post_result()
-
+        print(cls.username , cls.symbol)
         cls.on_price_change(data, str(data['CandleStick']['timestamp']['$date']), float(data['CandleStick']['close']))
         print(" [x] Done")
         # ch.close()
@@ -135,5 +135,5 @@ class Abc(abc.ABC):
     def post_buy_info(cls):
         requests.post('http://127.0.0.1:5000/portfoliotracker',
                       json={'username': cls.username, 'symbol': cls.symbol, 'Open price': cls.script_open_price,
-                            'Open ts': cls.script_open_timestamp})
+                            'Open ts': cls.script_open_timestamp,'on_going':cls.on_going })
 

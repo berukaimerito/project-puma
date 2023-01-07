@@ -1,9 +1,12 @@
+import time
+
 import requests
 from functools import wraps
 from datetime import timedelta
 from db import db
 from get_data import get_historical_kline
 from flask import Flask, request, jsonify, json, make_response
+from flask_socketio import SocketIO
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
 from dotenv import dotenv_values
@@ -32,6 +35,8 @@ def token_required(function):
 
 
 puma = Flask(__name__, static_folder="static", template_folder="templates", instance_relative_config=True)
+socketio = SocketIO(puma)
+
 cors = CORS(puma, resource={
     r"/*": {
         "origins": "*"
@@ -159,7 +164,8 @@ def default_chart():
     data = request.json
     symbol = data['symbol']
     interval = data['interval']
-    return get_historical_kline(symbol, interval)
+    return jsonify('')
+    # return get_historical_kline(symbol, interval)
 
 
 @puma.route('/dashboard', methods=['POST', 'GET', 'PUT', 'DELETE'])
@@ -169,26 +175,31 @@ def dash():
     data = request.json
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
-    response = []
-    if user.scripts:
-        response = [{'symbol': i.symbol} for i in user.scripts]
-        if request.method == 'DELETE':
-            symbol = data['symbol']
-            user.delete_script(symbol)
-        return jsonify(response)
+
+    response = [{'symbol': i.symbol} for i in user.scripts]
+    print(response)
+    if request.method == 'DELETE':
+        symbol = data['symbol']
+        user.delete_script(symbol)
+
 
     return jsonify(response)
+
+
+
+
+
+
+
 
 
 @puma.route('/portfoliotracker', methods=['POST'])
 def portfolio_update():
     data = request.json
     user = UserModel.getquery_name(data['username'])
-    user.add_portfolio(data['symbol'],data['Open price'],data['Open ts'])
+    user.add_portfolio(data['symbol'], data['Open price'], data['Open ts'], data['on_going'])
     user.save()
     return jsonify(data)
-
-
 
 
 @puma.route('/dashboard/portfolio', methods=['GET'])
@@ -196,12 +207,47 @@ def portfolio_update():
 def portfolio():
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
-    port= []
+    result = []
     if request.method == 'GET':
         for item in user.portfolio:
-            port.append({item.symbol,item.buy_price,item.open_timestamp})
-        return jsonify(port)
-    return jsonify(user)
+            item_dict = {
+                'symbol': item.symbol,
+                'buy_price': item.buy_price,
+                'open_timestamp': item.open_timestamp,
+                'on_going': item.on_going
+            }
+            if not item.on_going:
+                print()
+                # item_dict = {
+                #     'close'
+                #      'close_ts'
+                # }
+
+            # else:
+            #     while True:
+            #         profit = calculate_profit(user.portfolio)
+            #
+            #         socketio.emit('profits', {'profits': profit})
+            #         time.sleep(3)
+            result.append(item_dict)
+            print(type(item_dict))
+
+        print(type(result))
+        return jsonify(result)
+
+
+def calculate_profit(list_of_p):
+    result = []
+    for item in list_of_p:
+        profit = calculate_item_profit(item)
+        result.append({'symbol': item.symbol, 'profit': profit})
+    pass
+
+
+def calculate_item_profit(item):
+    print(item.open_price)
+
+    pass
 
 
 import os
@@ -212,22 +258,35 @@ import os
 @cross_origin(origin='*', headers=['Content- Type', 'Authorization'])
 def scripts():
     # users get queue data
+
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
 
     if request.method == 'POST':  # POST /sciprts
         data = request.json
         symbol, script = data['symbol'], data['code']
+
+        with open(f"user_scripts/{user.username}_{symbol}.py", "w") as user_script:
+            user_script.write(f"{script}")
+            print('script yazdi')
+            path = f"user_scripts/{user.username}.py"
         if user.check_scripts(symbol):
 
-            with open(f"user_scripts/{user.username}_{symbol}.py", "w") as user_script:
-                user_script.write(f"{script}")
-                path = f"user_scripts/{user.username}.py"
+            user.edit_script(symbol, script)
+            user.save()
 
-                user.add_script(symbol, script, path)
-                user.save()
-            r = {'symbol': symbol, 'code': script}
-            return make_response(jsonify(r))
+
+
+            #
+            # user.update_script(symbol, script, path, True)
+            # user.save()
+        else:
+            print(3111111111111111111111111111111111111111111111111111111111111111111111111111111)
+            user.update_script(symbol, script, path, True)
+            pass
+
+        r = {'symbol': symbol, 'code': script}
+        return make_response(jsonify(r))
 
 
 @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
@@ -239,14 +298,12 @@ def script_run(symbol):
     data = {'userName': user.username,
             'symbol': symbol,
             }
-    #################################### guncel coin deger  ###########
 
+    if user.check_scripts(symbol):
+        requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+        return make_response(jsonify('Gonderdik komutanim'))
 
-
-
-    requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
-
-    return make_response(jsonify('deneme'))
+    return jsonify('Already running')
 
 
 # @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
@@ -291,11 +348,15 @@ def execute_script(symbol):
         py_script = user.find_pyscript_by_symbol(symbol)
         user.save()
 
+        with open(f"user_scripts/{user.username}_{symbol}.py", "w") as user_script:
+            user_script.write(f"{new_script}")
+            print('script yazdi')
+            path = f"user_scripts/{user.username}.py"
+
         json_object = json.dumps({
             'userName': user.username,
             'symbol': symbol,
             'script': py_script
-
         })
 
         loaded_r = json.loads(json_object)
@@ -303,4 +364,5 @@ def execute_script(symbol):
         return make_response(loaded_r)
 
 
+socketio.start_background_task(target=socketio.run, app=puma)
 puma.run(host="127.0.0.1", port=5000, debug=True)

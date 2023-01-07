@@ -16,15 +16,11 @@ class UserModel(Document):
     portfolio = ListField(EmbeddedDocumentField(PortfolioModel))
     scripts = ListField(EmbeddedDocumentField(ScriptModel))
 
-
-
-
-    
     def edit_user_pswd(self, pswd):
         new_pswd = generate_password_hash(pswd)
         self.password = new_pswd
         return True
-    
+
     def edit_user_mail(self, email):
         self.email = email
         return True
@@ -36,14 +32,13 @@ class UserModel(Document):
     def edit_user_name(self, username):
         self.username = username
         return True
-        
 
-    def add_portfolio(self, symbol,open_price,timestamp):
-        self.portfolio.append((PortfolioModel(symbol=symbol,buy_price=open_price,open_timestamp=timestamp)))
+    def add_portfolio(self, symbol, open_price, timestamp, on_going):
+        self.portfolio.append(
+            (PortfolioModel(symbol=symbol, buy_price=open_price, open_timestamp=timestamp, on_going=on_going)))
 
-    def add_script(self, symbol, pyscript, path):
-        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, path=path)))
-    
+    def add_script(self, symbol, pyscript, path, on_going):
+        self.scripts.append((ScriptModel(symbol=symbol, pyscript=pyscript, path=path, on_going=on_going)))
 
     def delete_script(self, symbol):
 
@@ -59,28 +54,37 @@ class UserModel(Document):
                 return script.pyscript
 
 
-    def check_scripts(self,symbol):
+
+    def update_script(self,symbol, script, path, Status):
+        for x in self.scripts:
+            print('ICERISI')
+            print()
+            print(x)
+        self.save()
+
+    def check_scripts(self, symbol):
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
-                return False
-        return True
+                return True
+        return False
 
-
-
-
-
-
-    def edit_script(self, symbol,pyscript):
+    def edit_script(self, symbol, pyscript):
 
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
                 script.pyscript = pyscript
-                print( script.pyscript )
-                print( pyscript )
-                print(script.pyscript==pyscript)
 
                 return True
 
+    @staticmethod
+    def check_script(id, symbol):
+        user = UserModel.objects(id=id).first()
+
+        for script in user.scripts:
+            if script.on_going:
+                return False
+
+        return True
 
     @staticmethod
     def check_symbol(id, symbol):
