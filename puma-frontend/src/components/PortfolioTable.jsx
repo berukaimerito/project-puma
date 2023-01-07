@@ -16,20 +16,28 @@ const options = {
 }
 
 function PortfolioTable({ currencies }) {
-
-  const [socket, setSocket] = useState(null);
-
+  
   useEffect(() => {
-    const newSocket = io(`http://localhost:5000`);
-    setSocket(newSocket);
-
     portfolioService.getPortfolioById().then(data => {
       console.log(data)
+      console.log('2222')
     }).catch(err=>{
       console.log(err)
+      console.log('err')
+
     })
+    const newSocket = io(`wss://localhost:5000`);
+    newSocket.on('data', (data) => {
+      console.log(data)
+    })
+
+    newSocket.on('profits', (data) => {
+      console.log(data)
+    })
+    
+    
     return () => newSocket.close();
-  }, [setSocket]);
+  }, []);
   
   return (
     <Table bordered hover>
