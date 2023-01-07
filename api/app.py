@@ -275,15 +275,9 @@ def scripts():
             user.edit_script(symbol, script)
             user.save()
 
-
-
-            #
-            # user.update_script(symbol, script, path, True)
-            # user.save()
         else:
-            print(3111111111111111111111111111111111111111111111111111111111111111111111111111111)
-            user.update_script(symbol, script, path, True)
-            pass
+            user.add_script(symbol,script,path,True)
+            user.save()
 
         r = {'symbol': symbol, 'code': script}
         return make_response(jsonify(r))

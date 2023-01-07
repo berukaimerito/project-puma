@@ -54,14 +54,6 @@ class UserModel(Document):
                 return script.pyscript
 
 
-
-    def update_script(self,symbol, script, path, Status):
-        for x in self.scripts:
-            print('ICERISI')
-            print()
-            print(x)
-        self.save()
-
     def check_scripts(self, symbol):
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
