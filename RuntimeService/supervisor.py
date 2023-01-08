@@ -33,13 +33,5 @@ class Supervisor(metaclass=Singleton):
 
             bot.app.rabbit_channel.basic_consume(queue=queue_interval_1,
                                                  on_message_callback=bot.consume_interval_1)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_2,
-                                                 on_message_callback=bot.consume_interval_2)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_3,
-                                                 on_message_callback=bot.consume_interval_3)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_4,
-                                                 on_message_callback=bot.consume_interval_4)
-            bot.app.rabbit_channel.basic_consume(queue=queue_interval_5,
-                                                 on_message_callback=bot.consume_interval_5)
 
             bot.app.rabbit_channel.start_consuming()

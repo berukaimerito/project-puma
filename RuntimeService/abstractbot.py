@@ -1,8 +1,7 @@
-from abc import ABC,abstractmethod
+import time
+from abc import ABC, abstractmethod
 import json
 import requests
-
-
 
 
 class Abc(ABC):
@@ -27,7 +26,7 @@ class Abc(ABC):
 
         # Flags
         self.buy_flag = None
-        self.sell_flag = None
+        self.sell_flag = False
 
         # Script
         self.script_open_price = None
@@ -52,9 +51,6 @@ class Abc(ABC):
 
         # Indicator
 
-
-
-
     def run_once(function):
         def wrapper(*args, **kwargs):
             if not wrapper.has_run:
@@ -64,18 +60,15 @@ class Abc(ABC):
         wrapper.has_run = False
         return wrapper
 
+    def buy(cls):
 
-
-    def buy(self):
-
-        if self.buy_flag == None:
-            self.buy_flag = self.on_going = True
-            self.sell_flag = False
-
+        if cls.buy_flag == None:
+            cls.buy_flag = cls.on_going = True
 
     def sell(cls):
-        cls.sell_flag = True
-        cls.on_going = False
+        if cls.buy_flag == True:
+            cls.sell_flag = True
+
 
     def on_price_change_1m(cls, data, ts, price):
         None
@@ -93,17 +86,21 @@ class Abc(ABC):
         None
 
     def post_buy_info(cls):
+        print('post buy info')
         requests.post('http://127.0.0.1:5000/portfoliotracker',
                       json={'username': cls.username, 'symbol': cls.symbol, 'Open price': cls.script_open_price,
                             'Open ts': cls.script_open_timestamp, 'on_going': True})
 
     def post_result(cls):
         print('post result ici')
-        cls.calculate_closed_script()
-        requests.post('http://127.0.0.1:5000/portfolio_finish',
-                      json={'username': cls.username, 'symbol': cls.symbol, 'Close ts': cls.script_close_timestamp,
-                            'close_price': cls.script_close_price, 'on_going': False, 'profit': cls.profit})
+        if cls.on_going:
 
+            cls.calculate_closed_script()
+            print('girdi')
+            requests.post('http://127.0.0.1:5000/portfolio_finish',
+                          json={'username': cls.username, 'symbol': cls.symbol, 'Close ts': cls.script_close_timestamp,
+                                'close_price': cls.script_close_price, 'on_going':False, 'profit': cls.profit})
+            return
     def calculate_total(self):
         pass
 
@@ -119,77 +116,30 @@ class Abc(ABC):
         cls.close_time = data['CandleStick']['close_time']
         cls.timestamp = str(data['CandleStick']['timestamp']['$date'])
 
-        if cls.buy_flag and not cls.sell_flag:
+        if cls.buy_flag and cls.on_going:
             print('buy icerisi ')
             cls.script_open_price = cls.close  # Profit
             cls.script_open_timestamp = cls.timestamp  # Data candle
             cls.buy_flag = False
             cls.post_buy_info()
             print('bir kere girdim buy ici')
-        if cls.sell_flag:
-            cls.script_close_price = cls.close
-            cls.script_close_timestamp = cls.timestamp
-            cls.post_result()
-            ch.close()
-        cls.on_price_change_1m(data, str(data['CandleStick']['timestamp']['$date']), float(data['CandleStick']['close']))
-        print(" [x] Done")
-        # ch.close()
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-
-    def consume_interval_2(cls, ch, method, properties, body):
-        cls.ch = ch
-        data = cls.byte_to_dictionary(body.decode())
-        cls.high = float(data['CandleStick']['high'])
-        cls.low = float(data['CandleStick']['low'])
-        cls.open = float(data['CandleStick']['open'])
-        cls.close = float(data['CandleStick']['close'])
-        cls.volume = data['CandleStick']['volume']
-        cls.open_time = data['CandleStick']['open_time']
-        cls.close_time = data['CandleStick']['close_time']
-        cls.timestamp = str(data['CandleStick']['timestamp']['$date'])
-
-        if cls.buy_flag and not cls.sell_flag:
-            print('buy icerisi ')
-            cls.script_open_price = cls.close  # Profit
-            cls.script_open_timestamp = cls.timestamp  # Data candle
-            cls.buy_flag = False
-            cls.post_buy_info()
-            print('bir kere girdim buy ici')
-        if cls.sell_flag:
-            cls.script_close_price = cls.close
-            cls.script_close_timestamp = cls.timestamp
-            cls.post_result()
-            ch.close()
-        cls.on_price_change_15m(data, str(data['CandleStick']['timestamp']['$date']),
+            if cls.sell_flag and cls.on_going:
+                print('sell ici')
+                cls.script_close_price = cls.close
+                cls.script_close_timestamp = cls.timestamp
+                cls.post_result()
+                ch.close()
+        cls.on_price_change_1m(data, str(data['CandleStick']['timestamp']['$date']),
                                float(data['CandleStick']['close']))
         print(" [x] Done")
         # ch.close()
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def consume_interval_3(cls, ch, method, properties, body):
-        cls.ch = ch
-        dic = cls.byte_to_dictionary(body.decode())
-        # Bot.on_price_change(dic)
-        # print(" [x] Done")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def consume_interval_4(cls, ch, method, properties, body):
-        cls.ch = ch
-        dic = cls.byte_to_dictionary(body.decode())
-        # Bot.on_price_change(dic)
-        print(" [x] Done")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-
-    def consume_interval_5(cls, ch, method, properties, body):
-        cls.ch = ch
-        dic = cls.byte_to_dictionary(body.decode())
-        # Bot.on_price_change(dic)
-        # print(" [x] Done")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def calculate_closed_script(cls):
         cls.profit = ((cls.open - cls.close) / cls.close) * 100
-        return cls.profit
+        return float(cls.profit)
 
     def byte_to_dictionary(cls, str):
         data = json.loads(str)
@@ -197,7 +147,3 @@ class Abc(ABC):
         cls.data = data
         return cls.data
 
-    def post_buy_info(cls):
-        requests.post('http://127.0.0.1:5000/portfoliotracker',
-                      json={'username': cls.username, 'symbol': cls.symbol, 'Open price': cls.script_open_price,
-                            'Open ts': cls.script_open_timestamp, 'on_going': True})
