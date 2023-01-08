@@ -3,6 +3,7 @@ import Table from 'react-bootstrap/Table'
 import Chart from '@qognicafinance/react-lightweight-charts'
 import io from 'socket.io-client';
 import portfolioService from '../services/portfolio.service';
+import Message from './Message';
 
 
 const options = {
@@ -16,10 +17,12 @@ const options = {
 }
 
 function PortfolioTable({ currencies }) {
+  const [data, setData] = useState([])
   
   useEffect(() => {
     portfolioService.getPortfolioById().then(data => {
       console.log(data)
+      setData(data || [])
       console.log('2222')
     }).catch(err=>{
       console.log(err)
@@ -40,7 +43,42 @@ function PortfolioTable({ currencies }) {
   }, []);
   
   return (
+    <>
+    { data && data.length > 0? (
     <Table bordered hover>
+       <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Open price</th>
+          <th>Open time</th>
+          <th>Status</th>
+          <th>Profit/Loss</th>
+          <th>Close price</th>
+          <th>Close time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((curr) => {
+          return (
+            <>
+              <tr>
+                <th>{curr.symbol}</th>
+                <th>{curr.buy_price}</th>
+                <th>{curr.open_timestamp}</th>
+                <th>${curr.on_going}</th>
+                <th>{curr.profit}</th>
+                <th>{curr.close_price}</th>
+                <th>{curr.close_price}</th>
+              </tr>
+            </>
+          )
+        })}
+      </tbody>
+      </Table>
+       ) : (
+        <Message variant="danger">Scripts does not have data</Message>
+      )}
+      <Table bordered hover>
       <thead>
         <tr>
           <th>Currency</th>
@@ -77,6 +115,7 @@ function PortfolioTable({ currencies }) {
         })}
       </tbody>
     </Table>
+    </>
   )
 }
 

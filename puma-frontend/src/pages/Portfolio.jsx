@@ -43,6 +43,11 @@ const Portfolio = () => {
         <h1>Portfolio</h1>
         <PortfolioHeader portfolio={portfolio} />
         <div style={{ marginTop: '50px' }}>
+
+          <br />
+          <br />
+        </div>
+        <div style={{ marginTop: '50px' }}>
           <PortfolioTable currencies={currencies} />
 
           <h3>Profit historical data</h3>
