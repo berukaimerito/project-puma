@@ -6,6 +6,7 @@ import FormContainer from '../components/FormContainer'
 import { login } from '../slices/auth'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Spinner from 'react-bootstrap/Spinner';
 
 const reload = () => window.location.reload()
 
@@ -58,8 +59,8 @@ const Login = () => {
 
         <br />
         <div className="d-grid gap-2">
-        <Button type="submit" variant="dark" size="lg" style={{marginTop: "20px"}}>
-          Login
+        <Button disabled={loading} type="submit" variant="dark" size="lg" style={{marginTop: "20px"}}>
+          {loading ? <Spinner animation="border" /> : 'Login'}
         </Button>
         </div>
       </Form>

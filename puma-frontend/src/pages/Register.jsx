@@ -7,6 +7,7 @@ import Message from '../components/Message'
 import { register } from '../slices/auth'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Register = () => {
   const [name, setName] = useState('')
@@ -34,11 +35,16 @@ const Register = () => {
     if (password !== confirmPassword) {
       setMessage('Passwords do not match')
     } else {
+      console.log(loading)
         dispatch(register({name,surname, email, password, confirmPassword}))
-        toast("You successfully registered. Now login please!")
-        setTimeout(()=> {     
+        console.log(loading)
+        if(!loading){
+          toast("You successfully registered. Now login please!")
+          // setTimeout(()=> {     
+          //   navigate("/login")
+          // },2000)
           navigate("/login")
-        },2000)
+        }  
     }
   }
 
@@ -101,7 +107,7 @@ const Register = () => {
         <br />
         <div className="d-grid gap-2">
         <Button type="submit" variant="dark" size="lg">
-          Register
+          {loading ? <Spinner animation="border" /> : 'Register'}
         </Button>
         </div>
       </Form>
