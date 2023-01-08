@@ -12,8 +12,9 @@ class ScriptModel(EmbeddedDocument):
     symbol = StringField()
     pyscript = StringField()
     interval = StringField()
-    profit = StringField()
     on_going = BooleanField()
+    profit = StringField()
+
 
 
     def __str__(self):
