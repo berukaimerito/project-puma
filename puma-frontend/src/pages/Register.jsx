@@ -40,9 +40,9 @@ const Register = () => {
         console.log(loading)
         if(!loading){
           toast("You successfully registered. Now login please!")
-          // setTimeout(()=> {     
-          //   navigate("/login")
-          // },2000)
+          setTimeout(()=> {     
+            navigate("/login")
+          },2000)
           navigate("/login")
         }  
     }

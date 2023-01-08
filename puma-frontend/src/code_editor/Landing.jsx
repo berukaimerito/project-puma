@@ -26,14 +26,13 @@ const Landing = () => {
   const params = useParams()
 
   const [code, setCode] = useState(params.id ? '' : javascriptDefault)
-  const [customInput, setCustomInput] = useState('')
   const [outputDetails, setOutputDetails] = useState(null)
   const [processing, setProcessing] = useState(false)
+  const [running, setRunning] = useState(false)
   const [theme, setTheme] = useState('cobalt')
   const [currency, setCurrency] = useState(params.id ? params.id : 'BTCUSDT')
   const [language, setLanguage] = useState(languageOptions[0])
   const navigate = useNavigate()
-
 
   const enterPress = useKeyPress('Enter')
   const ctrlPress = useKeyPress('Control')
@@ -107,7 +106,6 @@ const Landing = () => {
 
     scriptService.editScript(currency, code).then((data)=> {
       setProcessing(false)
-  
       toast("Changes were successfully saved")
       setTimeout(()=> {     
          navigate("/dashboard")
@@ -118,13 +116,22 @@ const Landing = () => {
   }
 
   const handleRun = () => {
-    // setProcessing(true)
+    setRunning(true)
 
     scriptService.runScript(currency, code).then((data)=> {
-      // setProcessing(false)
-      toast("Code was run successfully")
-   }).catch(()=> {
-    // setProcessing(false)
+      console.log(data)
+      if(data === 'Already running'){
+        setRunning(false)
+        toast("Code is already running")
+      }else{
+        setRunning(false)
+        toast("Code was run successfully")
+      }
+      
+   }).catch((err)=> {
+    console.log(err)
+    toast("Some server error occured. Try again!")
+    setRunning(false)
   })
   }
 
@@ -180,7 +187,7 @@ const Landing = () => {
           <OutputWindow outputDetails={outputDetails} />
           <div className="flex flex-col items-end">
             <button style={{ color: 'green' }} onClick={handleRun} disabled={!code}>
-              {'Run'}
+              { running ? 'running...' : `Run`}
             </button>
             <button style={{ marginLeft: '10px', color: 'red' }} onClick={handleStop}>{'Stop'}</button>
           </div>
