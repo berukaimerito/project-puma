@@ -7,8 +7,8 @@ from Services.db_service import add_new_ticker as SaveTicker
 from Services import db_service
 from Utils import json_util
 from Services.queue_service import UserQueue
-from Models.CandleStickModel import CandleStick
-from Models.TickerModel import Ticker
+from models.CandleStickModel import CandleStick
+from models.TickerModel import Ticker
 from dotenv import dotenv_values
 
 config = dotenv_values()

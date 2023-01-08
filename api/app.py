@@ -1,5 +1,5 @@
 import time
-
+import json
 import requests
 from functools import wraps
 from datetime import timedelta
@@ -17,6 +17,9 @@ from common.encoder import MongoEncoder
 from werkzeug.security import check_password_hash
 
 config = dotenv_values()
+
+
+
 
 
 def token_required(function):
@@ -288,24 +291,45 @@ def scripts():
         return make_response(jsonify(r))
 
 
+
+
+
+def send_queue(data):
+    print("SENT usagum")
+    response = jsonify("Queue sent")
+    requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
+    return response
+
+
+json_list = []
+queues = set()
+
+
 @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
 @jwt_required()
 @cross_origin(origin='*', headers=['Content- Type', 'Authorization'])
 def script_run(symbol):
+
     user_id = get_id(str_to_dict(get_jwt_identity()))
     user = UserModel.getquery_id(user_id)
     data = {'userName': user.username,
             'symbol': symbol,
             }
+    queue = json.dumps(data, sort_keys=True)
 
-    if user.check_scripts(symbol):
-        requests.post("http://127.0.0.1:8000/create_queue", json=data, verify=False)
-        return make_response(jsonify('Gonderdik komutanim'))
-
-    return jsonify('Already running')
-
-
-# @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
+    if not queues:
+        queues.add(queue)
+        if user.check_scripts(symbol):
+            send_queue(data)
+    else:
+        if queue in queues:
+            print("sadece options reqest aliyor daa post gitmeyur ")
+            return make_response(jsonify('EXIST'),401)
+        else:
+            if user.check_scripts(symbol):
+                send_queue(data)
+            
+                return jsonify('Already running')# @puma.route('/scripts/<symbol>/run', methods=['POST', 'GET', 'PUT'])
 # @jwt_required()
 # def run_script_start_rs_queues(symbol):
 

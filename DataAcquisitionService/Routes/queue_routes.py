@@ -3,7 +3,7 @@ import time
 from fastapi import APIRouter, Body, Request, Response, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from typing import List
-from Models.QueueModel import Queue
+from models.QueueModel import Queue
 from Services.queue_service import UserQueue
 
 router = APIRouter()

@@ -13,9 +13,8 @@ def scripts_to_dict(lst):
 
 
 def str_to_dict(string):
-    data = ast.literal_eval(str(string))
+    data = json.loads(string)
     return data
-
 
 import json
 def str_to_json(str):
