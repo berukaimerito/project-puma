@@ -21,6 +21,24 @@ class UserModel(Document):
         self.password = new_pswd
         return True
 
+    def check_transaction(self, symbol,profit,close_ts,close_price,on_going):
+
+        for p in self.portfolio:
+            print(p.symbol,p.on_going)
+            if p.symbol == symbol and p.on_going:
+                print('icerdeyim')
+                p.profit = profit
+                p.on_going = False
+                p.close_price = close_price
+                p.close_timestamp = close_ts
+                self.save()
+
+
+
+
+
+
+
     def edit_user_mail(self, email):
         self.email = email
         return True
@@ -52,7 +70,6 @@ class UserModel(Document):
         for script in self.scripts:
             if str(script.symbol) == str(symbol):
                 return script.pyscript
-
 
     def check_scripts(self, symbol):
         for script in self.scripts:

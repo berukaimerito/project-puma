@@ -187,15 +187,20 @@ def dash():
 
 
 
+@puma.route('/portfolio_finish', methods=['POST'])
+def portfolio_finish():
+    data = request.json
+    user,symbol,profit,close_ts,close_price,on_going= UserModel.getquery_name(data['username']),data['symbol'],data['profit'],data['Close ts'],data['close_price'],data['on_going']
+    print('apideyim',user,symbol,close_ts,close_price,on_going)
+    user.check_transaction(symbol,profit,close_ts,close_price,on_going)
+    print('if blogu ici')
 
-
-
-
-
+    return jsonify(data)
 
 @puma.route('/portfoliotracker', methods=['POST'])
 def portfolio_update():
     data = request.json
+    print('portfolio tracker')
     user = UserModel.getquery_name(data['username'])
     user.add_portfolio(data['symbol'], data['Open price'], data['Open ts'], data['on_going'])
     user.save()
@@ -276,7 +281,7 @@ def scripts():
             user.save()
 
         else:
-            user.add_script(symbol,script,path,True)
+            user.add_script(symbol,script,path,False)
             user.save()
 
         r = {'symbol': symbol, 'code': script}
