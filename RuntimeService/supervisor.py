@@ -1,8 +1,5 @@
 from dotenv import dotenv_values
-
 config = dotenv_values()
-
-from bot import Bot
 
 
 class Singleton(type):
@@ -16,8 +13,6 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-# class Supervisor:
-# class Supervisor:
 class Supervisor(metaclass=Singleton):
     supervisor_bot_list = []
 

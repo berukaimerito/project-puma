@@ -1,11 +1,9 @@
-from db import db
 from mongoengine import Document
 from mongoengine import StringField, EmailField, EmbeddedDocumentField, ListField
 from models.portfolio_model import PortfolioModel
 from models.script_model import ScriptModel
-# from api.models.script_model import ScriptModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils import *
+from common.utils import *
 
 
 class UserModel(Document):
@@ -32,11 +30,6 @@ class UserModel(Document):
                 p.close_price = close_price
                 p.close_timestamp = close_ts
                 self.save()
-
-
-
-
-
 
 
     def edit_user_mail(self, email):

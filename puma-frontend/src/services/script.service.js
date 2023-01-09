@@ -99,13 +99,27 @@ const runScript = async (symbol, code) => {
   });
 };
 
-const stopScript = async (symbol) => {
-  return axios
-    .post(API_URL + "scripts/" + symbol + "/stop")
-    .then((response) => {
-      return response.data;
-    });
+
+const stopScript = async (symbol, code) => {
+  return axios({
+    method: "post",
+    url: API_URL + "scripts/" + symbol + "/stop",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-KEY": "XXX",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+      Authorization: authHeader().Authorization,
+    },
+    data: {
+      symbol,
+      code,
+    },
+  }).then((response) => {
+    return response.data;
+  });
 };
+
 
 const getAllScripts = async () => {
   return axios

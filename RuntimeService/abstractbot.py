@@ -70,21 +70,6 @@ class Abc(ABC):
             cls.sell_flag = True
 
 
-    def on_price_change_1m(cls, data, ts, price):
-        None
-
-    def on_price_change_15m(cls, data, ts, price):
-        None
-
-    def on_price_change3_1h(cls, data, ts, price):
-        None
-
-    def on_price_change_4h(cls, data, ts, price):
-        None
-
-    def on_price_change_1D(cls, data, ts, price):
-        None
-
     def post_buy_info(cls):
         print('post buy info')
         requests.post('http://127.0.0.1:5000/portfoliotracker',
@@ -101,10 +86,15 @@ class Abc(ABC):
                           json={'username': cls.username, 'symbol': cls.symbol, 'Close ts': cls.script_close_timestamp,
                                 'close_price': cls.script_close_price, 'on_going':False, 'profit': cls.profit})
             return
-    def calculate_total(self):
-        pass
+
+
+    def calculate_closed_script(cls):
+        cls.profit = ((cls.open - cls.close) / cls.close) * 100
+        return float(cls.profit)
+
 
     def consume_interval_1(cls, ch, method, properties, body):
+        
         cls.ch = ch
         data = cls.byte_to_dictionary(body.decode())
         cls.high = float(data['CandleStick']['high'])
@@ -117,29 +107,28 @@ class Abc(ABC):
         cls.timestamp = str(data['CandleStick']['timestamp']['$date'])
 
         if cls.buy_flag and cls.on_going:
+
             print('buy icerisi ')
             cls.script_open_price = cls.close  # Profit
             cls.script_open_timestamp = cls.timestamp  # Data candle
             cls.buy_flag = False
             cls.post_buy_info()
             print('bir kere girdim buy ici')
+
             if cls.sell_flag and cls.on_going:
+                
                 print('sell ici')
                 cls.script_close_price = cls.close
                 cls.script_close_timestamp = cls.timestamp
                 cls.post_result()
                 ch.close()
+
         cls.on_price_change_1m(data, str(data['CandleStick']['timestamp']['$date']),
                                float(data['CandleStick']['close']))
+
         print(" [x] Done")
         # ch.close()
         ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-
-    def calculate_closed_script(cls):
-        cls.profit = ((cls.open - cls.close) / cls.close) * 100
-        return float(cls.profit)
 
     def byte_to_dictionary(cls, str):
         data = json.loads(str)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
 
-class User(BaseModel):
-    userName: str = Field(...)
+class QueueModel(BaseModel):
+    user_name: str = Field(...)
     symbol: str = Field(...)

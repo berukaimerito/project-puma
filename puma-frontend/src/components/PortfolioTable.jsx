@@ -1,9 +1,11 @@
+
 import { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table'
 import Chart from '@qognicafinance/react-lightweight-charts'
 import io from 'socket.io-client';
 import portfolioService from '../services/portfolio.service';
 import Message from './Message';
+import PortfolioHeader from '../components/PortfolioHeader'
 
 
 const options = {
@@ -20,30 +22,36 @@ function PortfolioTable({ currencies }) {
   const [data, setData] = useState([])
   
   useEffect(() => {
-    portfolioService.getPortfolioById().then(data => {
-      console.log(data)
-      setData(data || [])
-      console.log('2222')
-    }).catch(err=>{
-      console.log(err)
-      console.log('err')
+    setInterval(()=> {
+      portfolioService.getPortfolioById().then(data => {
+        console.log(data)
+        setData(data || [])
+      }).catch(err=>{
+        console.log(err)
+      })
+    }, 2000)
+    
+    // const newSocket = io(`http://localhost:5000`);
+    // newSocket.on('data', (data) => {
+    //   console.log(data)
+    // })
 
-    })
-    const newSocket = io(`wss://localhost:5000`);
-    newSocket.on('data', (data) => {
-      console.log(data)
-    })
-
-    newSocket.on('profits', (data) => {
-      console.log(data)
-    })
+    // newSocket.on('profits', (data) => {
+    //   console.log(data)
+    // })
     
     
-    return () => newSocket.close();
+    return () => {};
   }, []);
   
   return (
     <>
+    <PortfolioHeader portfolio={data && data.length > 1 && data[0].profit} />
+        <div style={{ marginTop: '50px' }}>
+
+          <br />
+          <br />
+        </div>
     { data && data.length > 0? (
     <Table bordered hover>
        <thead>
@@ -64,11 +72,11 @@ function PortfolioTable({ currencies }) {
               <tr>
                 <th>{curr.symbol}</th>
                 <th>{curr.buy_price}</th>
-                <th>{curr.open_timestamp}</th>
-                <th>${curr.on_going}</th>
+                <th>{new Date(curr.open_timestamp)}</th>
+                <th>{curr.on_going}</th>
                 <th>{curr.profit}</th>
                 <th>{curr.close_price}</th>
-                <th>{curr.close_price}</th>
+                <th>{new Date(curr.close_timestamp)}</th>
               </tr>
             </>
           )
@@ -78,7 +86,7 @@ function PortfolioTable({ currencies }) {
        ) : (
         <Message variant="danger">Scripts does not have data</Message>
       )}
-      <Table bordered hover>
+      {/* <Table bordered hover>
       <thead>
         <tr>
           <th>Currency</th>
@@ -114,9 +122,11 @@ function PortfolioTable({ currencies }) {
           )
         })}
       </tbody>
-    </Table>
+    </Table> */}
     </>
   )
 }
 
 export default PortfolioTable
+
+

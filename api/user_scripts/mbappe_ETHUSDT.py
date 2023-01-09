@@ -1,5 +1,0 @@
-/**
-* Default code.
-*/
-
-AAAA

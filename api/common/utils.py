@@ -1,6 +1,4 @@
-import ast
-
-
+import json
 
 def scripts_to_dict(lst):
     output = []
@@ -16,14 +14,10 @@ def str_to_dict(string):
     data = json.loads(string)
     return data
 
-import json
+
 def str_to_json(str):
     return json.loads(str)
-
-# def list_str_to_json(list):
-#     return json.dumps(list)
 
 
 def get_id(user):
     return user['_id']['$oid']
-
